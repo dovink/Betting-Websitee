@@ -57,7 +57,7 @@ export default function RegisterPage() {
    return (
       <div className="max-w-md mx-auto mt-40">
          <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-10">
-            Vartotojo registracija
+            Registracija
          </h1>
          <form onSubmit={onSubmit} className="grid gap-3">
             <div>
