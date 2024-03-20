@@ -1,6 +1,74 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+const validation = (form, setErrorMsg, setDisplayError) => {
+   // https://stackoverflow.com/a/12019115
+   const usernameRegex =
+      /^(?=.{5,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/;
+   // https://stackoverflow.com/a/46181
+   const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+   // https://stackoverflow.com/a/21456918
+   const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+   // sarasas miestu kuriuos galima pasirinkti
+   const validCities = [
+      "alytus",
+      "kaunas",
+      "klaipeda",
+      "marijampole",
+      "panevezys",
+      "siauliai",
+      "taurage",
+      "telsiai",
+      "utena",
+      "vilnius",
+   ];
+
+   if (!usernameRegex.test(form.name)) {
+      setDisplayError(true);
+      setErrorMsg(
+         "Neteisingas vardas. Vardą turi sudaryti bent 5 simboliai, turi prasidėti ir baigtis raidėmis."
+      );
+      return false;
+   }
+   if (!emailRegex.test(form.email)) {
+      setDisplayError(true);
+      setErrorMsg("El. pašto adresas nėra teisingas.");
+      return false;
+   }
+   if (!passwordRegex.test(form.password)) {
+      setDisplayError(true);
+      setErrorMsg(
+         "Neteisingas slaptažodis. Slaptažodžio ilgis sudaromas bent iš 8 simbolių, iš jų viena raidė turi būti didžioji, kita mažoji, vienas skaičius ir vienas specialus simbolis."
+      );
+      return false;
+   }
+   if (form.password !== form["confirm-pass"]) {
+      setDisplayError(true);
+      setErrorMsg("Slaptažodžiai nesutampa.");
+      return false;
+   }
+
+   // jeigu parinktas miestas neieina i sarasa, grazina klaida
+   let found = false;
+   for (const city of validCities) {
+      if (form.city === city) {
+         found = true;
+         break;
+      }
+   }
+
+   if (!found) {
+      setDisplayError(true);
+      setErrorMsg("Prašome pasirinkti tinkamą miestą.");
+      return false;
+   }
+
+   // returns true jeigu sekmingai pereina validacija
+   return true;
+};
+
 export default function RegisterPage() {
    // formos duomenys
    const [form, setForm] = useState({
@@ -10,6 +78,9 @@ export default function RegisterPage() {
       password: "",
       "confirm-pass": "",
    });
+   // Error message for UI
+   const [errorMsg, setErrorMsg] = useState("Error message");
+   const [displayError, setDisplayError] = useState(false);
    // skirta puslapio navigacijai
    const navigate = useNavigate();
 
@@ -25,6 +96,14 @@ export default function RegisterPage() {
    async function onSubmit(e) {
       // nerefreshina puslapio po submit mygtuko paspaudimo
       e.preventDefault();
+
+      // jeigu nepraeina validacijos, grazina false ir programa sustabdo darba
+      const success = validation(form, setErrorMsg, setDisplayError);
+      if (!success) {
+         return;
+      }
+
+      console.log("validacija yra sekminga");
 
       try {
          let response = await fetch("http://localhost:5050/", {
@@ -50,6 +129,10 @@ export default function RegisterPage() {
             password: "",
             "confirm-pass": "",
          });
+         // hide error message
+         setDisplayError(false);
+         // resetint error message
+         setErrorMsg("");
       }
    }
 
@@ -59,7 +142,7 @@ export default function RegisterPage() {
          <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-10">
             Registracija
          </h1>
-         <form onSubmit={onSubmit} className="grid gap-3">
+         <form onSubmit={onSubmit} className="grid gap-3" noValidate>
             <div>
                <label
                   htmlFor="name"
@@ -71,7 +154,6 @@ export default function RegisterPage() {
                   type="text"
                   name="name"
                   id="name"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={form.name}
                   onChange={(e) => updateForm({ name: e.target.value })}
@@ -88,7 +170,6 @@ export default function RegisterPage() {
                   type="email"
                   name="email"
                   id="email"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={form.email}
                   onChange={(e) => updateForm({ email: e.target.value })}
@@ -101,7 +182,6 @@ export default function RegisterPage() {
                <select
                   name="cities"
                   id="city-select"
-                  required
                   value={form.city}
                   onChange={(e) => updateForm({ city: e.target.value })}
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -132,7 +212,6 @@ export default function RegisterPage() {
                   type="password"
                   name="password"
                   id="password"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={form.password}
                   onChange={(e) => updateForm({ password: e.target.value })}
@@ -149,7 +228,6 @@ export default function RegisterPage() {
                   type="password"
                   name="confirm-password"
                   id="confirm-password"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={form["confirm-pass"]}
                   onChange={(e) =>
@@ -163,6 +241,9 @@ export default function RegisterPage() {
                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4"
             />
          </form>
+         {displayError && (
+            <p className="mt-5 text-center text-sm text-red-600">{errorMsg}</p>
+         )}
          <p className="mt-10 text-center text-sm text-gray-500">
             Jau prisiregistravę?
             <Link
