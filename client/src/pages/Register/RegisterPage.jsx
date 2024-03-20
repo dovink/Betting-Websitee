@@ -71,6 +71,7 @@ export default function RegisterPage() {
                   type="text"
                   name="name"
                   id="name"
+                  required
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={form.name}
                   onChange={(e) => updateForm({ name: e.target.value })}
@@ -87,6 +88,7 @@ export default function RegisterPage() {
                   type="email"
                   name="email"
                   id="email"
+                  required
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={form.email}
                   onChange={(e) => updateForm({ email: e.target.value })}
@@ -99,6 +101,7 @@ export default function RegisterPage() {
                <select
                   name="cities"
                   id="city-select"
+                  required
                   value={form.city}
                   onChange={(e) => updateForm({ city: e.target.value })}
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -129,6 +132,7 @@ export default function RegisterPage() {
                   type="password"
                   name="password"
                   id="password"
+                  required
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={form.password}
                   onChange={(e) => updateForm({ password: e.target.value })}
@@ -145,6 +149,7 @@ export default function RegisterPage() {
                   type="password"
                   name="confirm-password"
                   id="confirm-password"
+                  required
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={form["confirm-pass"]}
                   onChange={(e) =>
