@@ -3,16 +3,12 @@ import cors from "cors";
 import mongoose from "mongoose";
 const app = express();
 import cookieParser from "cookie-parser";
-//const cookieParser = require("cookie-parser");
 import router from "./routes/AuthRoute.js";
-//const authRoute = require("./routes/AuthRoute");
-//import users from "./routes/users.js";
 
 const ATLAS_URL = process.env.ATLAS_URI;
 
 mongoose.connect
-(ATLAS_URL, {
-})
+(ATLAS_URL, {})
 .then(() => console.log("Prisijungta prie duombazes"))
 .catch((err) => console.error(err));
 

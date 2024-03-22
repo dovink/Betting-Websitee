@@ -44,7 +44,7 @@ const validation = (form, setErrorMsg, setDisplayError) => {
       );
       return false;
    }
-   if (form.password !== form["confirm-pass"]) {
+   if (form.password !== form["confirm_pass"]) {
       setDisplayError(true);
       setErrorMsg("Slaptažodžiai nesutampa.");
       return false;
@@ -76,7 +76,7 @@ export default function RegisterPage() {
       email: "",
       city: "",
       password: "",
-      "confirm-pass": "",
+      "confirm_pass": "",
    });
    // Error message for UI
    const [errorMsg, setErrorMsg] = useState("Error message");
@@ -127,7 +127,7 @@ export default function RegisterPage() {
             email: "",
             city: "",
             password: "",
-            "confirm-pass": "",
+            "confirm_pass": "",
          });
          // hide error message
          setDisplayError(false);
@@ -219,19 +219,19 @@ export default function RegisterPage() {
             </div>
             <div>
                <label
-                  htmlFor="confirm-password"
+                  htmlFor="confirm_password"
                   className="block text-sm font-medium leading-6 text-gray-900"
                >
                   Pakartokite slaptažodį:
                </label>
                <input
                   type="password"
-                  name="confirm-password"
-                  id="confirm-password"
+                  name="confirm_password"
+                  id="confirm_password"
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={form["confirm-pass"]}
+                  value={form["confirm_pass"]}
                   onChange={(e) =>
-                     updateForm({ "confirm-pass": e.target.value })
+                     updateForm({ "confirm_pass": e.target.value })
                   }
                />
             </div>
