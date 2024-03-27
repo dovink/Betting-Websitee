@@ -7,7 +7,7 @@ const validation = (
    setEmailErr,
    setCityErr,
    setPasswordErr,
-   setConfirmPassErr,
+   setConfirmPassErr
 ) => {
    // https://stackoverflow.com/a/12019115
    const usernameRegex =
@@ -50,9 +50,7 @@ const validation = (
       // jeigu noError yra false, tai validacija nesekminga ir nebus POST requesto
       noError = false;
       // Error message for UI
-      setNameErr(
-         "Neteisingas vardas. Vardas sudaromas bent iš 5 raidžių."
-      );
+      setNameErr("Neteisingas vardas. Vardas sudaromas bent iš 5 raidžių.");
       // Pakeicia input border i raudona spalva
       document.getElementById("name").classList.add("ring-red-600");
    }
@@ -72,7 +70,6 @@ const validation = (
       noError = false;
       setConfirmPassErr("Laukelis negali būti tuščias.");
       document.getElementById("confirm_password").classList.add("ring-red-600");
-
    } else if (form.password !== form["confirm_pass"]) {
       noError = false;
       setConfirmPassErr("Slaptažodžiai nesutampa.");
@@ -105,7 +102,7 @@ export default function index() {
       email: "",
       city: "",
       password: "",
-      "confirm_pass": "",
+      confirm_pass: "",
    });
    // Error messages for UI
    const [nameErr, setNameErr] = useState("");
@@ -113,6 +110,8 @@ export default function index() {
    const [cityErr, setCityErr] = useState("");
    const [passwordErr, setPasswordErr] = useState("");
    const [confirmPassErr, setConfirmPassErr] = useState("");
+   // server-side response message
+   const [serverErr, setServerErr] = useState("");
    // skirta puslapio navigacijai
    const navigate = useNavigate();
 
@@ -128,14 +127,22 @@ export default function index() {
    async function onSubmit(e) {
       // nerefreshina puslapio po submit mygtuko paspaudimo
       e.preventDefault();
+      setServerErr("");
 
       // jeigu nepraeina validacijos, grazina false ir programa sustabdo darba
-      const success = validation(form, setNameErr, setEmailErr, setCityErr, setPasswordErr, setConfirmPassErr);
+      const success = validation(
+         form,
+         setNameErr,
+         setEmailErr,
+         setCityErr,
+         setPasswordErr,
+         setConfirmPassErr
+      );
       if (!success) {
          return;
       }
 
-      console.log("validacija yra sekminga");
+      // console.log("validacija yra sekminga");
 
       try {
          let response = await fetch("http://localhost:5050/", {
@@ -147,9 +154,13 @@ export default function index() {
          });
 
          if (!response.ok) {
+            const responseText = await response.text();
+            setServerErr(responseText);
             throw new Error(`HTTP error! status: ${response.status}`);
          }
+
          console.log("User was created successfully!");
+         navigate("/login");
       } catch (err) {
          console.error("A problem occurred with register operation: ", err);
       } finally {
@@ -159,9 +170,8 @@ export default function index() {
             email: "",
             city: "",
             password: "",
-            "confirm_pass": "",
+            confirm_pass: "",
          });
-         navigate("/login");
       }
    }
 
@@ -283,6 +293,7 @@ export default function index() {
                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4"
             />
          </form>
+         {serverErr && <p className="mt-2 text-sm text-red-600">{serverErr}</p>}
          <p className="mt-10 text-center text-sm text-gray-500">
             Jau prisiregistravę?
             <Link

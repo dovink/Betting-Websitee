@@ -16,22 +16,21 @@ export const register = async (req, res, next) => {
       const token = createSecretToken(user._id);
 
       // check if token is null
-      if (token == null)
-         res.status(401).send({
-            message: "Nepavyko sukurti tokeno.",
-            success: true,
-         });
+      if (token == null) {
+         return res.status(401).send("Nepavyko sukurti tokeno.");
+      }
 
       console.log(token);
       res.cookie("token", token, {
          withCredentials: true,
          httpOnly: false,
       });
-      res.status(201).send({
-         message: "User signed in successfully",
-         success: true,
-         user,
-      });
+      res.status(201).send("Vartotojas buvo sukurtas sėkmingai.");
+      // res.status(201).send({
+      //    message: "User signed in successfully",
+      //    success: true,
+      //    user,
+      // });
       next();
    } catch (error) {
       console.error(error);
