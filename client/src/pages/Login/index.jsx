@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function LoginPage() {
+export default function index() {
    const [form, setForm] = useState({
       email: "",
       password: "",
@@ -21,7 +21,7 @@ export default function LoginPage() {
    return (
       <div className="max-w-md mx-auto mt-40">
          <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-10">
-            Prisijungti
+            Prisijungimas
          </h1>
          <form onSubmit={onSubmit} className="grid gap-3">
             <div>
