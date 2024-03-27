@@ -7,10 +7,11 @@ import router from "./routes/AuthRoute.js";
 
 const ATLAS_URL = process.env.ATLAS_URI;
 
-mongoose.connect
-(ATLAS_URL, {})
-.then(() => console.log("Prisijungta prie duombazes"))
-.catch((err) => console.error(err));
+// How To Set DB Name - https://stackoverflow.com/a/74673686
+mongoose
+   .connect(ATLAS_URL, {})
+   .then(() => console.log("Prisijungta prie duombazes"))
+   .catch((err) => console.error(err));
 
 const PORT = process.env.PORT || 5050;
 
