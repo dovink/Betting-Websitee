@@ -145,7 +145,7 @@ export default function index() {
       // console.log("validacija yra sekminga");
 
       try {
-         let response = await fetch("http://localhost:5050/", {
+         let response = await fetch("http://localhost:5050/register", {
             method: "POST",
             headers: {
                "Content-Type": "application/json",

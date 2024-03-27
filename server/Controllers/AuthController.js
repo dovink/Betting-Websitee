@@ -41,33 +41,26 @@ export const login = async (req, res, next) => {
    try {
       const { email, password } = req.body;
       if (!email || !password) {
-         return res.json({ message: "All fields are required" });
+         return res.status(400).send("All fields are required");
       }
       const user = await User.findOne({ email });
       if (!user) {
-         return res.send({ message: "Incorrect password or email" });
+         return res.status(401).send("Incorrect password or email");
       }
       const auth = await bcrypt.compare(password, user.password);
       if (!auth) {
-         return res.json({ message: "Incorrect password or email" });
+         return res.status(401).send("Incorrect password or email");
       }
       const token = createSecretToken(user._id);
 
       // check if token is null
-      if (token == null)
-         res.status(401).send({
-            message: "Nepavyko sukurti tokeno.",
-            success: true,
-         });
+      if (token == null) res.status(401).send("Nepavyko sukurti tokeno.");
 
       res.cookie("token", token, {
          withCredentials: true,
          httpOnly: false,
       });
-      res.status(201).json({
-         message: "User logged in successfully",
-         success: true,
-      });
+      res.status(201).send("User logged in successfully");
       next();
    } catch (error) {
       console.error(error);
