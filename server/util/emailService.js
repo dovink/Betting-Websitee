@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-export const sendConfirmationEmail = async ({ name, email, city, userId }) => {
+export const sendConfirmationEmail = async ({ name, email, city, userId, url }) => {
   try {
     const mailOptions = {
       from: email,
@@ -27,7 +27,7 @@ export const sendConfirmationEmail = async ({ name, email, city, userId }) => {
           <li>El.Pastas: ${email}</li>
           <li>Miestas: ${city}</li>
         </ul>
-        <p><a href="http://your-app.com/admin/confirm/${userId}">Spauskite cia kad patvirtinti</a></p>
+        <p><a href="${url}">Spauskite cia kad patvirtinti</a></p>
       `,
     };
 

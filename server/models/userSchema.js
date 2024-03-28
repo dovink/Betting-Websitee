@@ -10,6 +10,7 @@ const userSchema = new mangoose.Schema({
    },
    city: { type: String, required: [true, "Miestas yra reikalingas"] },
    password: { type: String, required: [true, "Slaptazodis yra reikalingas"] },
+   verified: {type: Boolean, default: false},
 });
 
 userSchema.pre("save", async function () {

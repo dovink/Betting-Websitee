@@ -6,6 +6,7 @@ import HomePage from "./pages/Home/index";
 import RegisterPage from "./pages/Register/index";
 import LoginPage from "./pages/Login/index";
 import "./assets/index.css";
+import EmailVerify from "./pages/EmailVerify";
 
 const router = createBrowserRouter([
    {
@@ -19,7 +20,11 @@ const router = createBrowserRouter([
    {
       path: "/login",
       element: <LoginPage />
-   }
+   },
+   {
+      path: "/users/:id/verify/:token",
+      element: <EmailVerify />
+   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
