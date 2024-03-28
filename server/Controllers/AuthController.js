@@ -1,6 +1,7 @@
 import User from '../models/userSchema.js';
 import createSecretToken from "../util/SecretToken.js";
 import  bcrypt from "bcryptjs";
+import { sendConfirmationEmail } from "../util/emailService.js";
 
 export const register = async (req, res, next) => {
   try {
@@ -15,6 +16,14 @@ export const register = async (req, res, next) => {
     const user = await User.create({name, email,city,password});
     const token = createSecretToken(user._id);
     console.log(token);
+
+    await sendConfirmationEmail({
+      name: user.name,
+      email: user.email,
+      city: user.city,
+      userId: user._id,
+    });
+    
     res.cookie("token", token, {
       withCredentials: true,
       httpOnly: false,
@@ -47,7 +56,7 @@ export const login = async (req, res, next) => {
            withCredentials: true,
            httpOnly: false,
          });
-         res.status(201).json({ message: "User logged in successfully", success: true });
+         res.status(200).json({ message: "User logged in successfully", success: true });
          next()
       } catch (error) {
         console.error(error);
