@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export default function HomePage() {
+export default function index() {
    return (
       <div className="mt-20">
          <h1 className="text-center">This is Home page</h1>

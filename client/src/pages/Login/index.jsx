@@ -1,11 +1,40 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
+const validation = (form, setEmailErr, setPasswordErr) => {
+   // resetina input border spalvas
+   document.getElementById("email").classList.remove("ring-red-600");
+   document.getElementById("password").classList.remove("ring-red-600");
+   // resetina error messages
+   setEmailErr("");
+   setPasswordErr("");
+
+   let noError = true;
+   if (!form.email) {
+      noError = false;
+      setEmailErr("El. pašto laukelis negali būti tuščias.");
+      document.getElementById("email").classList.add("ring-red-600");
+   }
+   if (!form.password) {
+      noError = false;
+      setPasswordErr("Slaptažodžio laukelis negali būti tuščias.");
+      document.getElementById("password").classList.add("ring-red-600");
+   }
+
+   // jeigu validacija sekminga - grazina true
+   return noError;
+};
+
+export default function index() {
    const [form, setForm] = useState({
       email: "",
       password: "",
    });
+   const [emailErr, setEmailErr] = useState("");
+   const [passwordErr, setPasswordErr] = useState("");
+   // server-side response message
+   const [serverErr, setServerErr] = useState("");
+   const navigate = useNavigate();
 
    function updateForm(value) {
       return setForm((prev) => {
@@ -13,17 +42,47 @@ export default function LoginPage() {
       });
    }
 
-   // TODO: pabaigti forma
    async function onSubmit(e) {
       e.preventDefault();
+      // resetinti error message
+      setServerErr("");
+
+      const success = validation(form, setEmailErr, setPasswordErr);
+      if (!success) return;
+
+      try {
+         let response = await fetch("http://localhost:5050/login", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+         });
+
+         if (!response.ok) {
+            const responseText = await response.text();
+            setServerErr(responseText);
+            throw new Error(`HTTP error! status: ${response.status}`);
+         }
+
+         console.log("User logged in successfully!");
+         navigate("/");
+      } catch (err) {
+         console.error(`A problem occured with log in operation: ${err}`);
+      } finally {
+         setForm({
+            email: "",
+            password: "",
+         });
+      }
    }
 
    return (
       <div className="max-w-md mx-auto mt-40">
          <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-10">
-            Prisijungti
+            Prisijungimas
          </h1>
-         <form onSubmit={onSubmit} className="grid gap-3">
+         <form onSubmit={onSubmit} className="grid gap-3" noValidate>
             <div>
                <label
                   htmlFor="email"
@@ -39,6 +98,9 @@ export default function LoginPage() {
                   value={form.email}
                   onChange={(e) => updateForm({ email: e.target.value })}
                />
+               {emailErr && (
+                  <p className="mt-2 text-sm text-red-600">{emailErr}</p>
+               )}
             </div>
             <div>
                <label
@@ -55,6 +117,9 @@ export default function LoginPage() {
                   value={form.password}
                   onChange={(e) => updateForm({ password: e.target.value })}
                />
+               {passwordErr && (
+                  <p className="mt-2 text-sm text-red-600">{passwordErr}</p>
+               )}
             </div>
             <input
                type="submit"
@@ -62,6 +127,7 @@ export default function LoginPage() {
                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4"
             />
          </form>
+         {serverErr && <p className="mt-2 text-sm text-red-600">{serverErr}</p>}
          <p className="mt-10 text-center text-sm text-gray-500">
             Nesate prisiregistravę?
             <Link

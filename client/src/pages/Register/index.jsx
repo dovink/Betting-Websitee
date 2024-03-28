@@ -1,7 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const validation = (form, setErrorMsg, setDisplayError) => {
+const validation = (
+   form,
+   setNameErr,
+   setEmailErr,
+   setCityErr,
+   setPasswordErr,
+   setConfirmPassErr
+) => {
    // https://stackoverflow.com/a/12019115
    const usernameRegex =
       /^(?=.{5,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/;
@@ -10,7 +17,7 @@ const validation = (form, setErrorMsg, setDisplayError) => {
       /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
    // https://stackoverflow.com/a/21456918
    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
    // sarasas miestu kuriuos galima pasirinkti
    const validCities = [
       "alytus",
@@ -25,29 +32,48 @@ const validation = (form, setErrorMsg, setDisplayError) => {
       "vilnius",
    ];
 
+   // resetina input border spalvas
+   document.getElementById("name").classList.remove("ring-red-600");
+   document.getElementById("email").classList.remove("ring-red-600");
+   document.getElementById("password").classList.remove("ring-red-600");
+   document.getElementById("confirm_password").classList.remove("ring-red-600");
+   document.getElementById("city-select").classList.remove("ring-red-600");
+   // resetina error messages
+   setNameErr("");
+   setEmailErr("");
+   setPasswordErr("");
+   setConfirmPassErr("");
+   setCityErr("");
+
+   let noError = true;
    if (!usernameRegex.test(form.name)) {
-      setDisplayError(true);
-      setErrorMsg(
-         "Neteisingas vardas. Vardą turi sudaryti bent 5 simboliai, turi prasidėti ir baigtis raidėmis."
-      );
-      return false;
+      // jeigu noError yra false, tai validacija nesekminga ir nebus POST requesto
+      noError = false;
+      // Error message for UI
+      setNameErr("Neteisingas vardas. Vardas sudaromas bent iš 5 raidžių.");
+      // Pakeicia input border i raudona spalva
+      document.getElementById("name").classList.add("ring-red-600");
    }
    if (!emailRegex.test(form.email)) {
-      setDisplayError(true);
-      setErrorMsg("El. pašto adresas nėra teisingas.");
-      return false;
+      noError = false;
+      setEmailErr("El. pašto adresas nėra teisingas.");
+      document.getElementById("email").classList.add("ring-red-600");
    }
    if (!passwordRegex.test(form.password)) {
-      setDisplayError(true);
-      setErrorMsg(
-         "Neteisingas slaptažodis. Slaptažodžio ilgis sudaromas bent iš 8 simbolių, iš jų viena raidė turi būti didžioji, kita mažoji, vienas skaičius ir vienas specialus simbolis."
+      noError = false;
+      setPasswordErr(
+         "Neteisingas slaptažodis. Slaptažodis privalo turėti bent vieną skaičių, vieną specialų simbolį ir būti sudarytas iš 8 simbolių."
       );
-      return false;
+      document.getElementById("password").classList.add("ring-red-600");
    }
-   if (form.password !== form["confirm_pass"]) {
-      setDisplayError(true);
-      setErrorMsg("Slaptažodžiai nesutampa.");
-      return false;
+   if (!form["confirm_pass"]) {
+      noError = false;
+      setConfirmPassErr("Laukelis negali būti tuščias.");
+      document.getElementById("confirm_password").classList.add("ring-red-600");
+   } else if (form.password !== form["confirm_pass"]) {
+      noError = false;
+      setConfirmPassErr("Slaptažodžiai nesutampa.");
+      document.getElementById("confirm_password").classList.add("ring-red-600");
    }
 
    // jeigu parinktas miestas neieina i sarasa, grazina klaida
@@ -60,27 +86,32 @@ const validation = (form, setErrorMsg, setDisplayError) => {
    }
 
    if (!found) {
-      setDisplayError(true);
-      setErrorMsg("Prašome pasirinkti tinkamą miestą.");
-      return false;
+      noError = false;
+      setCityErr("Prašome pasirinkti tinkamą miestą.");
+      document.getElementById("city-select").classList.add("ring-red-600");
    }
 
    // returns true jeigu sekmingai pereina validacija
-   return true;
+   return noError;
 };
 
-export default function RegisterPage() {
+export default function index() {
    // formos duomenys
    const [form, setForm] = useState({
       name: "",
       email: "",
       city: "",
       password: "",
-      "confirm_pass": "",
+      confirm_pass: "",
    });
-   // Error message for UI
-   const [errorMsg, setErrorMsg] = useState("Error message");
-   const [displayError, setDisplayError] = useState(false);
+   // Error messages for UI
+   const [nameErr, setNameErr] = useState("");
+   const [emailErr, setEmailErr] = useState("");
+   const [cityErr, setCityErr] = useState("");
+   const [passwordErr, setPasswordErr] = useState("");
+   const [confirmPassErr, setConfirmPassErr] = useState("");
+   // server-side response message
+   const [serverErr, setServerErr] = useState("");
    // skirta puslapio navigacijai
    const navigate = useNavigate();
 
@@ -96,17 +127,25 @@ export default function RegisterPage() {
    async function onSubmit(e) {
       // nerefreshina puslapio po submit mygtuko paspaudimo
       e.preventDefault();
+      setServerErr("");
 
       // jeigu nepraeina validacijos, grazina false ir programa sustabdo darba
-      const success = validation(form, setErrorMsg, setDisplayError);
+      const success = validation(
+         form,
+         setNameErr,
+         setEmailErr,
+         setCityErr,
+         setPasswordErr,
+         setConfirmPassErr
+      );
       if (!success) {
          return;
       }
 
-      console.log("validacija yra sekminga");
+      // console.log("validacija yra sekminga");
 
       try {
-         let response = await fetch("http://localhost:5050/", {
+         let response = await fetch("http://localhost:5050/register", {
             method: "POST",
             headers: {
                "Content-Type": "application/json",
@@ -115,9 +154,13 @@ export default function RegisterPage() {
          });
 
          if (!response.ok) {
+            const responseText = await response.text();
+            setServerErr(responseText);
             throw new Error(`HTTP error! status: ${response.status}`);
          }
+
          console.log("User was created successfully!");
+         navigate("/login");
       } catch (err) {
          console.error("A problem occurred with register operation: ", err);
       } finally {
@@ -127,12 +170,8 @@ export default function RegisterPage() {
             email: "",
             city: "",
             password: "",
-            "confirm_pass": "",
+            confirm_pass: "",
          });
-         // hide error message
-         setDisplayError(false);
-         // resetint error message
-         setErrorMsg("");
       }
    }
 
@@ -158,6 +197,9 @@ export default function RegisterPage() {
                   value={form.name}
                   onChange={(e) => updateForm({ name: e.target.value })}
                />
+               {nameErr && (
+                  <p className="mt-2 text-sm text-red-600">{nameErr}</p>
+               )}
             </div>
             <div>
                <label
@@ -174,6 +216,9 @@ export default function RegisterPage() {
                   value={form.email}
                   onChange={(e) => updateForm({ email: e.target.value })}
                />
+               {emailErr && (
+                  <p className="mt-2 text-sm text-red-600">{emailErr}</p>
+               )}
             </div>
             <div>
                <label className="block text-sm font-medium leading-6 text-gray-900">
@@ -200,6 +245,9 @@ export default function RegisterPage() {
                   <option value="utena">Utena</option>
                   <option value="vilnius">Vilnius</option>
                </select>
+               {cityErr && (
+                  <p className="mt-2 text-sm text-red-600">{cityErr}</p>
+               )}
             </div>
             <div>
                <label
@@ -216,6 +264,9 @@ export default function RegisterPage() {
                   value={form.password}
                   onChange={(e) => updateForm({ password: e.target.value })}
                />
+               {passwordErr && (
+                  <p className="mt-2 text-sm text-red-600">{passwordErr}</p>
+               )}
             </div>
             <div>
                <label
@@ -230,10 +281,11 @@ export default function RegisterPage() {
                   id="confirm_password"
                   className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={form["confirm_pass"]}
-                  onChange={(e) =>
-                     updateForm({ "confirm_pass": e.target.value })
-                  }
+                  onChange={(e) => updateForm({ confirm_pass: e.target.value })}
                />
+               {confirmPassErr && (
+                  <p className="mt-2 text-sm text-red-600">{confirmPassErr}</p>
+               )}
             </div>
             <input
                type="submit"
@@ -241,9 +293,7 @@ export default function RegisterPage() {
                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4"
             />
          </form>
-         {displayError && (
-            <p className="mt-5 text-center text-sm text-red-600">{errorMsg}</p>
-         )}
+         {serverErr && <p className="mt-2 text-sm text-red-600">{serverErr}</p>}
          <p className="mt-10 text-center text-sm text-gray-500">
             Jau prisiregistravę?
             <Link
