@@ -2,6 +2,8 @@ import User from "../models/userSchema.js";
 import createSecretToken from "../util/SecretToken.js";
 import  bcrypt from "bcryptjs";
 import { sendConfirmationEmail } from "../util/emailService.js";
+import Token from "../models/token.js";
+import crypto from "crypto";
 
 export const register = async (req, res, next) => {
   try {
@@ -15,13 +17,21 @@ export const register = async (req, res, next) => {
     }
     const user = await User.create({name, email,city,password});
     const token = createSecretToken(user._id);
-    console.log(token);
+
+
+    const tokenConfirm = await new Token({
+      userId: user._id,
+      token: crypto.randomBytes(32).toString("hex")
+    }).save();
+    const url = `${process.env.BASE_URL}/users/${user._id}/verify/${tokenConfirm.token}`;
+
 
     await sendConfirmationEmail({
       name: user.name,
       email: user.email,
       city: user.city,
       userId: user._id,
+      url: url,
     });
     
     res.cookie("token", token, {
@@ -65,4 +75,24 @@ export const login = async (req, res, next) => {
    } catch (error) {
       console.error(error);
    }
+};
+
+export const verify = async(req,res) => {
+  try {
+    const user = await User.findOne({_id: req.params.id});
+    if (!user) return res.status(400).send({message: "Invalid link"});
+
+    const token = await Token.findOne({
+      UserId: user._id,
+      token: req.params.token
+    });
+    if (!token) return res.status(400).send({message: "Invalid link"});
+
+    await User.updateOne({_id: user.id, verified: true});
+    await token.remove();
+
+    res.status(200).send({message: "Email verified succesfully"});
+  } catch(error){
+    res.status(500).send({message: "Internal server error"});
+  }
 };
