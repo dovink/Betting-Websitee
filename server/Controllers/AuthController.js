@@ -23,7 +23,7 @@ export const register = async (req, res, next) => {
       userId: user._id,
       token: crypto.randomBytes(32).toString("hex")
     }).save();
-    const url = `${process.env.BASE_URL}/users/${user._id}/verify/${tokenConfirm.token}`;
+    const url = `${process.env.BASE_URL}/${user._id}/verify/${tokenConfirm.token}`;
 
 
     await sendConfirmationEmail({
@@ -81,16 +81,13 @@ export const verify = async(req,res) => {
   try {
     const user = await User.findOne({_id: req.params.id});
     if (!user) return res.status(400).send({message: "Invalid link"});
-
     const token = await Token.findOne({
-      UserId: user._id,
-      token: req.params.token
+      userId: user._id,
+      token: req.params.token,
     });
     if (!token) return res.status(400).send({message: "Invalid link"});
-
-    await User.updateOne({_id: user.id, verified: true});
-    await token.remove();
-
+    await User.updateOne({ _id: user._id }, { verified: true });
+	  //await token.remove();
     res.status(200).send({message: "Email verified succesfully"});
   } catch(error){
     res.status(500).send({message: "Internal server error"});

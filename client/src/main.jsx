@@ -6,7 +6,7 @@ import HomePage from "./pages/Home/index";
 import RegisterPage from "./pages/Register/index";
 import LoginPage from "./pages/Login/index";
 import "./assets/index.css";
-import EmailVerify from "./pages/EmailVerify";
+import EmailVerify from "./pages/EmailVerify/index";
 
 const router = createBrowserRouter([
    {
@@ -22,7 +22,7 @@ const router = createBrowserRouter([
       element: <LoginPage />
    },
    {
-      path: "/users/:id/verify/:token",
+      path: "/:id/verify/:token/",
       element: <EmailVerify />
    },
 ]);
