@@ -27,10 +27,7 @@ const EmailVerify = () => {
 		<Fragment>
 			{validUrl ? (
 				<div className={styles.container}>
-					<h1>Email verified successfully</h1>
-					<Link to="/login">
-						<button className={styles.green_btn}>Login</button>
-					</Link>
+					<h1>El.pastas patvirtintas sekmingai</h1>
 				</div>
 			) : (
 				<h1>404 Not Found</h1>
