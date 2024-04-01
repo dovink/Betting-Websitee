@@ -40,7 +40,7 @@ export const register = async (req, res, next) => {
     });
     res
       .status(201)
-      .send({ message: "User signed in successfully", success: true, user });
+      .send({ message: "Registracija sekminga", success: true, user });
     next();
   } catch (error) {
     console.error(error);
@@ -51,15 +51,19 @@ export const login = async (req, res, next) => {
    try {
       const { email, password } = req.body;
       if (!email || !password) {
-         return res.status(400).send("All fields are required");
+         return res.status(400).send("Uzpildykite visus laukelius");
       }
       const user = await User.findOne({ email });
       if (!user) {
-         return res.status(401).send("Incorrect password or email");
+         return res.status(401).send("Neteisingas slaptazodis arba el.pasto adresas");
       }
       const auth = await bcrypt.compare(password, user.password);
       if (!auth) {
-         return res.status(401).send("Incorrect password or email");
+         return res.status(401).send("Neteisingas slaptazodis arba el.pasto adresas");
+      }
+      if(user.validate)
+      {
+        return res.status(401).send("Jusu paskyra dar nera patvirtinta");
       }
       const token = createSecretToken(user._id);
 
@@ -70,7 +74,7 @@ export const login = async (req, res, next) => {
          withCredentials: true,
          httpOnly: false,
       });
-      res.status(201).send("User logged in successfully");
+      res.status(201).send("Klientas sekmingai prisijunge");
       next();
    } catch (error) {
       console.error(error);
@@ -80,16 +84,16 @@ export const login = async (req, res, next) => {
 export const verify = async(req,res) => {
   try {
     const user = await User.findOne({_id: req.params.id});
-    if (!user) return res.status(400).send({message: "Invalid link"});
+    if (!user) return res.status(400).send({message: "Puslapis neegizstuoja"});
     const token = await Token.findOne({
       userId: user._id,
       token: req.params.token,
     });
-    if (!token) return res.status(400).send({message: "Invalid link"});
+   // if (!token) return res.status(400).send({message: "Puslapis neegizstuoja"});
     await User.updateOne({ _id: user._id }, { verified: true });
-	  //await token.remove();
-    res.status(200).send({message: "Email verified succesfully"});
+	  await Token.findOneAndDelete({token: req.params.token});
+    res.status(200).send({message: "El.pastas patvirtintas sekmingai"});
   } catch(error){
-    res.status(500).send({message: "Internal server error"});
+    res.status(500).send({message: "Serverio klaida"});
   }
 };
