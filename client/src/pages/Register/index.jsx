@@ -1,11 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const validation = (
    form,
    setNameErr,
    setEmailErr,
-   setCityErr,
    setPasswordErr,
    setConfirmPassErr
 ) => {
@@ -18,32 +17,17 @@ const validation = (
    // https://stackoverflow.com/a/21456918
    const passwordRegex =
       /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-   // sarasas miestu kuriuos galima pasirinkti
-   const validCities = [
-      "alytus",
-      "kaunas",
-      "klaipeda",
-      "marijampole",
-      "panevezys",
-      "siauliai",
-      "taurage",
-      "telsiai",
-      "utena",
-      "vilnius",
-   ];
 
    // resetina input border spalvas
    document.getElementById("name").classList.remove("ring-red-600");
    document.getElementById("email").classList.remove("ring-red-600");
    document.getElementById("password").classList.remove("ring-red-600");
    document.getElementById("confirm_password").classList.remove("ring-red-600");
-   document.getElementById("city-select").classList.remove("ring-red-600");
    // resetina error messages
    setNameErr("");
    setEmailErr("");
    setPasswordErr("");
    setConfirmPassErr("");
-   setCityErr("");
 
    let noError = true;
    if (!usernameRegex.test(form.name)) {
@@ -76,21 +60,6 @@ const validation = (
       document.getElementById("confirm_password").classList.add("ring-red-600");
    }
 
-   // jeigu parinktas miestas neieina i sarasa, grazina klaida
-   let found = false;
-   for (const city of validCities) {
-      if (form.city === city) {
-         found = true;
-         break;
-      }
-   }
-
-   if (!found) {
-      noError = false;
-      setCityErr("Prašome pasirinkti tinkamą miestą.");
-      document.getElementById("city-select").classList.add("ring-red-600");
-   }
-
    // returns true jeigu sekmingai pereina validacija
    return noError;
 };
@@ -107,11 +76,11 @@ export default function index() {
    // Error messages for UI
    const [nameErr, setNameErr] = useState("");
    const [emailErr, setEmailErr] = useState("");
-   const [cityErr, setCityErr] = useState("");
    const [passwordErr, setPasswordErr] = useState("");
    const [confirmPassErr, setConfirmPassErr] = useState("");
    // server-side response message
    const [serverErr, setServerErr] = useState("");
+   const [agreeTerms, setAgreeTerms] = useState(false);
    // skirta puslapio navigacijai
    const navigate = useNavigate();
 
@@ -134,7 +103,6 @@ export default function index() {
          form,
          setNameErr,
          setEmailErr,
-         setCityErr,
          setPasswordErr,
          setConfirmPassErr
       );
@@ -168,141 +136,153 @@ export default function index() {
          setForm({
             name: "",
             email: "",
-            city: "",
             password: "",
             confirm_pass: "",
          });
       }
    }
 
+   // pakeisti button dizaina (taisykles checkbox)
+   useEffect(() => {
+      if (agreeTerms) {
+         document
+            .getElementById("register-btn")
+            .classList.add("hover:bg-indigo-500");
+         document.getElementById("register-btn").classList.remove("opacity-50");
+         document
+            .getElementById("register-btn")
+            .classList.remove("cursor-not-allowed");
+      } else {
+         document
+            .getElementById("register-btn")
+            .classList.remove("hover:bg-indigo-500");
+         document.getElementById("register-btn").classList.add("opacity-50");
+         document
+            .getElementById("register-btn")
+            .classList.add("cursor-not-allowed");
+      }
+   }, [agreeTerms]);
+
    // puslapio UI
    return (
-      <div className="max-w-md mx-auto mt-40">
-         <h1 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-10">
-            Registracija
-         </h1>
-         <form onSubmit={onSubmit} className="grid gap-3" noValidate>
-            <div>
-               <label
-                  htmlFor="name"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-               >
-                  Vardas:
-               </label>
+      <div className="bg-slate-100 h-lvh pt-52">
+         <div className="max-w-md mx-auto bg-white px-12 py-10 rounded-lg shadow-md">
+            <h1 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-10">
+               Registracija
+            </h1>
+            <form onSubmit={onSubmit} className="grid gap-3" noValidate>
+               <div>
+                  <label
+                     htmlFor="name"
+                     className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                     Vardas:
+                  </label>
+                  <input
+                     type="text"
+                     name="name"
+                     id="name"
+                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                     value={form.name}
+                     onChange={(e) => updateForm({ name: e.target.value })}
+                  />
+                  {nameErr && (
+                     <p className="mt-2 text-sm text-red-600">{nameErr}</p>
+                  )}
+               </div>
+               <div>
+                  <label
+                     htmlFor="email"
+                     className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                     El. paštas:
+                  </label>
+                  <input
+                     type="email"
+                     name="email"
+                     id="email"
+                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                     value={form.email}
+                     onChange={(e) => updateForm({ email: e.target.value })}
+                  />
+                  {emailErr && (
+                     <p className="mt-2 text-sm text-red-600">{emailErr}</p>
+                  )}
+               </div>
+               <div>
+                  <label
+                     htmlFor="password"
+                     className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                     Slaptažodis:
+                  </label>
+                  <input
+                     type="password"
+                     name="password"
+                     id="password"
+                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                     value={form.password}
+                     onChange={(e) => updateForm({ password: e.target.value })}
+                  />
+                  {passwordErr && (
+                     <p className="mt-2 text-sm text-red-600">{passwordErr}</p>
+                  )}
+               </div>
+               <div>
+                  <label
+                     htmlFor="confirm_password"
+                     className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                     Pakartokite slaptažodį:
+                  </label>
+                  <input
+                     type="password"
+                     name="confirm_password"
+                     id="confirm_password"
+                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                     value={form["confirm_pass"]}
+                     onChange={(e) =>
+                        updateForm({ confirm_pass: e.target.value })
+                     }
+                  />
+                  {confirmPassErr && (
+                     <p className="mt-2 text-sm text-red-600">
+                        {confirmPassErr}
+                     </p>
+                  )}
+               </div>
                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={form.name}
-                  onChange={(e) => updateForm({ name: e.target.value })}
+                  id="register-btn"
+                  type="submit"
+                  value="Prisiregistruoti"
+                  disabled={!agreeTerms}
+                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4"
                />
-               {nameErr && (
-                  <p className="mt-2 text-sm text-red-600">{nameErr}</p>
-               )}
-            </div>
-            <div>
-               <label
-                  htmlFor="email"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+               <div className="mt-4 flex gap-x-3 items-center">
+                  <input
+                     type="checkbox"
+                     id="taisykles"
+                     name="taisykles"
+                     value={agreeTerms}
+                     onChange={(e) => setAgreeTerms(e.target.checked)}
+                     className="accent-indigo-600"
+                  />
+                  <label htmlFor="taisykles">Sutinku su taisyklėmis</label>
+               </div>
+            </form>
+            {serverErr && (
+               <p className="mt-2 text-sm text-red-600">{serverErr}</p>
+            )}
+            <p className="mt-8 text-center text-sm text-gray-500">
+               Jau prisiregistravę?
+               <Link
+                  to="/login"
+                  className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"
                >
-                  El. paštas:
-               </label>
-               <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={form.email}
-                  onChange={(e) => updateForm({ email: e.target.value })}
-               />
-               {emailErr && (
-                  <p className="mt-2 text-sm text-red-600">{emailErr}</p>
-               )}
-            </div>
-            <div>
-               <label className="block text-sm font-medium leading-6 text-gray-900">
-                  Miestas (apskritis):
-               </label>
-               <select
-                  name="cities"
-                  id="city-select"
-                  value={form.city}
-                  onChange={(e) => updateForm({ city: e.target.value })}
-                  className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-               >
-                  <option value="" disabled={true}>
-                     --Prašome pasirinkti miestą--
-                  </option>
-                  <option value="alytus">Alytus</option>
-                  <option value="kaunas">Kaunas</option>
-                  <option value="klaipeda">Klaipėda</option>
-                  <option value="marijampole">Marijampolė</option>
-                  <option value="panevezys">Panevėžys</option>
-                  <option value="siauliai">Šiauliai</option>
-                  <option value="taurage">Tauragė</option>
-                  <option value="telsiai">Telšiai</option>
-                  <option value="utena">Utena</option>
-                  <option value="vilnius">Vilnius</option>
-               </select>
-               {cityErr && (
-                  <p className="mt-2 text-sm text-red-600">{cityErr}</p>
-               )}
-            </div>
-            <div>
-               <label
-                  htmlFor="password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-               >
-                  Slaptažodis:
-               </label>
-               <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={form.password}
-                  onChange={(e) => updateForm({ password: e.target.value })}
-               />
-               {passwordErr && (
-                  <p className="mt-2 text-sm text-red-600">{passwordErr}</p>
-               )}
-            </div>
-            <div>
-               <label
-                  htmlFor="confirm_password"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-               >
-                  Pakartokite slaptažodį:
-               </label>
-               <input
-                  type="password"
-                  name="confirm_password"
-                  id="confirm_password"
-                  className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={form["confirm_pass"]}
-                  onChange={(e) => updateForm({ confirm_pass: e.target.value })}
-               />
-               {confirmPassErr && (
-                  <p className="mt-2 text-sm text-red-600">{confirmPassErr}</p>
-               )}
-            </div>
-            <input
-               type="submit"
-               value="Prisiregistruoti"
-               className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4"
-            />
-         </form>
-         {serverErr && <p className="mt-2 text-sm text-red-600">{serverErr}</p>}
-         <p className="mt-10 text-center text-sm text-gray-500">
-            Jau prisiregistravę?
-            <Link
-               to="/login"
-               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"
-            >
-               Prisijungti
-            </Link>
-         </p>
+                  Prisijungti
+               </Link>
+            </p>
+         </div>
       </div>
    );
 }

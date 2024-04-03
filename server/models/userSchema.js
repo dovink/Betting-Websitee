@@ -8,7 +8,6 @@ const userSchema = new mangoose.Schema({
       required: [true, "El.pasto adresas yra reikalingas"],
       unique: true,
    },
-   city: { type: String, required: [true, "Miestas yra reikalingas"] },
    password: { type: String, required: [true, "Slaptazodis yra reikalingas"] },
    verified: {type: Boolean, default: false},
 });
