@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { sendConfirmationEmail } from "../util/emailService.js";
 import Token from "../models/token.js";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res, next) => {
    try {
@@ -64,8 +65,8 @@ export const login = async (req, res, next) => {
             .status(401)
             .send("Neteisingas slaptazodis arba el.pasto adresas");
       }
-      if (user.validate) {
-         return res.status(401).send("Jusu paskyra dar nera patvirtinta");
+      if (!user.verified) {
+         return res.status(401).send("Jusu paskyra nera patvirtinta");
       }
       const token = createSecretToken(user._id);
 
@@ -73,8 +74,9 @@ export const login = async (req, res, next) => {
       if (token == null) res.status(401).send("Nepavyko sukurti tokeno.");
 
       res.cookie("token", token, {
-         withCredentials: true,
-         httpOnly: false,
+         path: '/',
+         expires: new Date(Date.now() + 1000 * 300000000),
+         httpOnly: true
       });
       res.status(201).send("Klientas sekmingai prisijunge");
       next();
@@ -100,3 +102,39 @@ export const verify = async (req, res) => {
       res.status(500).send({ message: "Serverio klaida" });
    }
 };
+export const verifyToken = (req, res, next) => {
+   const cookies = req.headers.cookie;
+   if (!cookies) {
+      return res.status(404).send({ message: "Token not found" });
+   }
+   const token = cookies.split("=")[1];
+   if (!token) {
+      return res.status(404).send({ message: "Token not found" });
+   }
+   jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
+      if (err) {
+         return res.status(400).send({ message: "Invalid Token" });
+      }
+      req.userId = decoded.id;
+      next();
+   });
+};
+
+export const getUser = async (req, res, next) => {
+   const userId = req.userId;
+   let user;
+   try {
+      user = await User.findById(userId, "-password");
+      if (!user) {
+         return res.status(404).send({ message: "User Not Found" });
+      }
+      return res.status(200).send({ user });
+   } catch (err) {
+      return next(err);
+   }
+};
+export const logOut = async (req,res) => {
+   res.clearCookie("token");
+   req.cookies["token"] = "";
+   return res.status(200).send({message: "Atsijungta sekmingai"});
+}

@@ -53,6 +53,8 @@ export default function index() {
       try {
          let response = await fetch("http://localhost:5050/login", {
             method: "POST",
+            withCredentials: true,
+            credentials: 'include',
             headers: {
                "Content-Type": "application/json",
             },
