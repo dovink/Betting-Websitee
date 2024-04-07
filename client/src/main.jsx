@@ -2,11 +2,11 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import HomePage from "./pages/Home/index";
-import RegisterPage from "./pages/Register/index";
-import LoginPage from "./pages/Login/index";
+import HomePage from "./pages/Home/HomePage";
+import RegisterPage from "./pages/Register/RegisterPage";
+import LoginPage from "./pages/Login/LoginPage";
 import "./assets/index.css";
-import EmailVerify from "./pages/EmailVerify/index";
+import EmailVerify from "./pages/EmailVerify/EmailVerify";
 
 const router = createBrowserRouter([
    {

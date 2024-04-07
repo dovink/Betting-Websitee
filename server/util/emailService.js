@@ -16,6 +16,7 @@ const transporter = nodemailer.createTransport({
 export const sendConfirmationEmail = async ({
    name,
    email,
+   phone,
    userId,
    url,
 }) => {
@@ -30,6 +31,7 @@ export const sendConfirmationEmail = async ({
         <ul>
           <li>Vardas: ${name}</li>
           <li>El.Pastas: ${email}</li>
+          <li>Tel. Numeris: ${phone}</li>
         </ul>
         <p><a href="${url}">Spauskite cia kad patvirtinti</a></p>
       `,

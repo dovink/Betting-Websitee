@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import PhoneInput from "react-phone-number-input/input";
 
 const validation = (
    form,
    setNameErr,
    setEmailErr,
+   setPhoneErr,
    setPasswordErr,
    setConfirmPassErr
 ) => {
@@ -21,11 +23,13 @@ const validation = (
    // resetina input border spalvas
    document.getElementById("name").classList.remove("ring-red-600");
    document.getElementById("email").classList.remove("ring-red-600");
+   document.getElementById("phone").classList.remove("ring-red-600");
    document.getElementById("password").classList.remove("ring-red-600");
    document.getElementById("confirm_password").classList.remove("ring-red-600");
    // resetina error messages
    setNameErr("");
    setEmailErr("");
+   setPhoneErr("");
    setPasswordErr("");
    setConfirmPassErr("");
 
@@ -59,23 +63,35 @@ const validation = (
       setConfirmPassErr("Slaptažodžiai nesutampa.");
       document.getElementById("confirm_password").classList.add("ring-red-600");
    }
+   if (!form.phone) {
+      noError = false;
+      setPhoneErr("Telefono numerio laukelis negali būti tuščias.");
+      document.getElementById("phone").classList.add("ring-red-600");
+   } else if (form.phone.length != 12) {
+      noError = false;
+      setPhoneErr("Neteisingas telefono numeris.");
+      document.getElementById("phone").classList.add("ring-red-600");
+   }
 
    // returns true jeigu sekmingai pereina validacija
    return noError;
 };
 
-export default function index() {
+export default function RegisterPage() {
    // formos duomenys
    const [form, setForm] = useState({
       name: "",
       email: "",
-      city: "",
+      phone: "",
       password: "",
       confirm_pass: "",
    });
+   // naudojamas del react phone number library
+   const [phone, setPhone] = useState("");
    // Error messages for UI
    const [nameErr, setNameErr] = useState("");
    const [emailErr, setEmailErr] = useState("");
+   const [phoneErr, setPhoneErr] = useState("");
    const [passwordErr, setPasswordErr] = useState("");
    const [confirmPassErr, setConfirmPassErr] = useState("");
    // server-side response message
@@ -103,6 +119,7 @@ export default function index() {
          form,
          setNameErr,
          setEmailErr,
+         setPhoneErr,
          setPasswordErr,
          setConfirmPassErr
       );
@@ -136,6 +153,7 @@ export default function index() {
          setForm({
             name: "",
             email: "",
+            phone: "",
             password: "",
             confirm_pass: "",
          });
@@ -162,6 +180,11 @@ export default function index() {
             .classList.add("cursor-not-allowed");
       }
    }, [agreeTerms]);
+
+   // updatina form.phone
+   useEffect(() => {
+      updateForm({ phone: phone });
+   }, [phone]);
 
    // puslapio UI
    return (
@@ -207,6 +230,26 @@ export default function index() {
                   />
                   {emailErr && (
                      <p className="mt-2 text-sm text-red-600">{emailErr}</p>
+                  )}
+               </div>
+               <div>
+                  <label
+                     htmlFor="phone"
+                     className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                     Tel. Numeris:
+                  </label>
+                  <PhoneInput
+                     id="phone"
+                     country="LT"
+                     value={phone}
+                     onChange={setPhone}
+                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                     placeholder="370 6XX XXXXX"
+                     maxLength="13"
+                  />
+                  {phoneErr && (
+                     <p className="mt-2 text-sm text-red-600">{phoneErr}</p>
                   )}
                </div>
                <div>

@@ -25,7 +25,7 @@ const validation = (form, setEmailErr, setPasswordErr) => {
    return noError;
 };
 
-export default function index() {
+export default function LoginPage() {
    const [form, setForm] = useState({
       email: "",
       password: "",
@@ -54,7 +54,7 @@ export default function index() {
          let response = await fetch("http://localhost:5050/login", {
             method: "POST",
             withCredentials: true,
-            credentials: 'include',
+            credentials: "include",
             headers: {
                "Content-Type": "application/json",
             },

@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 
 export const register = async (req, res, next) => {
    try {
-      const { name, email, password, confirm_pass } = req.body;
+      const { name, email, phone, password, confirm_pass } = req.body;
       const existingUser = await User.findOne({ email });
       if (existingUser) {
          return res.status(401).send("Toks useris jau egzistuoja");
@@ -16,7 +16,14 @@ export const register = async (req, res, next) => {
       if (password != confirm_pass) {
          return res.status(401).send("Pakartotas slaptazodis neatitinka");
       }
-      const user = await User.create({ name, email, password });
+
+      if (!phone) {
+         return res.status(401).send("Telefono numerio laukelis negali būti tuščias.")
+      } else if (phone.length != 12) {
+         return res.status(401).send("Neteisingas telefono numeris.");
+      }
+
+      const user = await User.create({ name, email, phone, password });
       const token = createSecretToken(user._id);
 
       const tokenConfirm = await new Token({
@@ -28,6 +35,7 @@ export const register = async (req, res, next) => {
       await sendConfirmationEmail({
          name: user.name,
          email: user.email,
+         phone: user.phone,
          userId: user._id,
          url: url,
       });
@@ -74,9 +82,9 @@ export const login = async (req, res, next) => {
       if (token == null) res.status(401).send("Nepavyko sukurti tokeno.");
 
       res.cookie("token", token, {
-         path: '/',
+         path: "/",
          expires: new Date(Date.now() + 1000 * 300000000),
-         httpOnly: true
+         httpOnly: true,
       });
       res.status(201).send("Klientas sekmingai prisijunge");
       next();
@@ -133,8 +141,8 @@ export const getUser = async (req, res, next) => {
       return next(err);
    }
 };
-export const logOut = async (req,res) => {
+export const logOut = async (req, res) => {
    res.clearCookie("token");
    req.cookies["token"] = "";
-   return res.status(200).send({message: "Atsijungta sekmingai"});
-}
+   return res.status(200).send({ message: "Atsijungta sekmingai" });
+};

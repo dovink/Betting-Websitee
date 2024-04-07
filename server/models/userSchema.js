@@ -8,8 +8,9 @@ const userSchema = new mangoose.Schema({
       required: [true, "El.pasto adresas yra reikalingas"],
       unique: true,
    },
+   phone: { type: Number, required: [true, "Tel. numeris yra reikalingas"] },
    password: { type: String, required: [true, "Slaptazodis yra reikalingas"] },
-   verified: {type: Boolean, default: false},
+   verified: { type: Boolean, default: false },
 });
 
 userSchema.pre("save", async function () {
