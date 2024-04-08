@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Navigation from "../../components/Navigation";
+import Urvas from "../../assets/urvas.jpg";
+import Sidebar from "../../components/Sidebar";
 
 export default function HomePage() {
-   const [user, setUser] = useState(null);
+   const [user, setUser] = useState("");
    const navigate = useNavigate();
 
    const fetchUserInfo = async () => {
       try {
-         let response = await fetch("http://localhost:5050/", {
+         let response = await fetch("http://localhost:5050/home", {
             method: "GET",
             withCredentials: true,
             credentials: "include",
@@ -34,28 +37,14 @@ export default function HomePage() {
    }, []);
 
    return (
-      <div className="mt-20">
-         <h1 className="text-center">This is Home page</h1>
-         <div className="flex justify-center mt-10 gap-x-10">
-            <Link
-               to="/register"
-               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-            >
-               Registracijos puslapis
-            </Link>
-            <Link
-               to="/login"
-               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-            >
-               Prisijungimo puslapis
-            </Link>
+      <>
+         <Navigation user={user} />
+         <div className="max-w-screen-xl mx-auto mt-20 flex">
+            <Sidebar />
+            <div className="w-4/6">
+               <img src={Urvas} alt="octopus caricature" />
+            </div>
          </div>
-         {user && (
-            <p>
-               Welcome, {user.name}, {user.email}{" "}
-            </p>
-         )}{" "}
-         {/* Show user's name if available */}
-      </div>
+      </>
    );
 }

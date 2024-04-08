@@ -102,6 +102,8 @@ export const verify = async (req, res) => {
          userId: user._id,
          token: req.params.token,
       });
+      // ismeta 404 klaida, nes react puslapis persirefreshina ir tada tokenas buna jau panaikintas.
+      // Atkomentuoti tada kai bus leidziama i production
       // if (!token) return res.status(400).send({message: "Puslapis neegizstuoja"});
       await User.updateOne({ _id: user._id }, { verified: true });
       await Token.findOneAndDelete({ token: req.params.token });
