@@ -27,7 +27,7 @@ const EmailVerify = () => {
       <Fragment>
          {validUrl ? (
             <div className={styles.container}>
-               <h1>El.pastas patvirtintas sekmingai</h1>
+               <h1>Vartotojas patvirtintas sekmingai</h1>
             </div>
          ) : (
             <h1>404 Not Found</h1>

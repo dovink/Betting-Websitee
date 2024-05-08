@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PhoneInput from "react-phone-number-input/input";
+import NavigationOff from "../../components/NavigationOff";
 
 const validation = (
    form,
@@ -107,6 +108,23 @@ export default function RegisterPage() {
       });
    }
 
+   // function capitalizeString(form) {
+   //    const lowerName = form.name.toLowerCase();
+   //    const capitalizeName =
+   //       lowerName.charAt(0).toUpperCase() + lowerName.slice(1);
+
+   //    console.log("pirmas");
+   //    setForm((prev) => {
+   //       return {
+   //          name: capitalizeName,
+   //          email: "",
+   //          phone: "",
+   //          password: "",
+   //          confirm_pass: "",
+   //       };
+   //    });
+   // }
+
    // HTTP POST request'as
    // issiuncia uzpildytus formos duomenis
    async function onSubmit(e) {
@@ -126,8 +144,6 @@ export default function RegisterPage() {
       if (!success) {
          return;
       }
-
-      // console.log("validacija yra sekminga");
 
       try {
          let response = await fetch("http://localhost:5050/register", {
@@ -189,13 +205,7 @@ export default function RegisterPage() {
    // puslapio UI
    return (
       <>
-         <header className="shadow-md">
-            <nav className="max-w-screen-xl mx-auto flex justify-between">
-               <Link to="/">
-                  <h1>Aštuonkojo urvas</h1>
-               </Link>
-            </nav>
-         </header>
+         <NavigationOff />
          <div className="h-lvh pt-10">
             <div className="max-w-md mx-auto bg-gray-200 px-12 py-10 rounded-lg shadow-md">
                <h1 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-10">

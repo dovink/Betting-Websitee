@@ -22,7 +22,7 @@ export default function HomePage() {
          if (!response.ok) {
             navigate("/login");
             const responseText = await response.text();
-            setServerErr(responseText);
+            // setServerErr(responseText);
             throw new Error(`HTTP error! status: ${response.status}`);
          }
          const data = await response.json();
@@ -39,7 +39,7 @@ export default function HomePage() {
    return (
       <>
          <Navigation user={user} />
-         <div className="max-w-screen-xl mx-auto mt-20 flex">
+         <div className="max-w-screen-xl mx-auto mt-20 flex px-10">
             <Sidebar />
             <div className="w-4/6">
                <img src={Urvas} alt="octopus caricature" />
