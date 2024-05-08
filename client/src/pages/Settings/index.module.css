@@ -1,0 +1,9 @@
+.profileNav {
+   display: flex;
+   column-gap: 2rem;
+   flex-wrap: wrap;
+}
+.active {
+   color: green;
+   font-weight: 700;
+}

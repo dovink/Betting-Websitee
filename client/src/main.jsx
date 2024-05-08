@@ -4,20 +4,11 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 
 import IndexPage from "./pages/Index/IndexPage";
 import HomePage from "./pages/Home/HomePage";
-import RegisterPage from "./pages/Register/RegisterPage";
+import RegisterPage from "./pages/Register/index";
 import LoginPage from "./pages/Login/LoginPage";
 import "./assets/index.css";
 import EmailVerify from "./pages/EmailVerify/EmailVerify";
-import Navigation from "./components/Navigation";
-
-// function Layout() {
-//    return (
-//       <>
-//          <Navigation />
-//          <Outlet />
-//       </>
-//    );
-// }
+import Settings from "./pages/Settings/index";
 
 const router = createBrowserRouter([
    {
@@ -32,12 +23,6 @@ const router = createBrowserRouter([
       path: "/login",
       element: <LoginPage />,
    },
-   // {
-   //    element: <Layout />,
-   //    errorElement: <ErrorPage />,
-   //    children: [
-   //    ],
-   // },
    {
       path: "/home",
       element: <HomePage />,
@@ -45,6 +30,10 @@ const router = createBrowserRouter([
    {
       path: "/:id/verify/:token/",
       element: <EmailVerify />,
+   },
+   {
+      path: "/settings",
+      element: <Settings />,
    },
 ]);
 
