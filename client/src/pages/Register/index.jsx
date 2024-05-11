@@ -1,10 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import PhoneInput from "react-phone-number-input/input";
+import NavigationOff from "../../components/NavigationOff";
 
 const validation = (
    form,
    setNameErr,
    setEmailErr,
+   setPhoneErr,
    setPasswordErr,
    setConfirmPassErr
 ) => {
@@ -21,11 +24,13 @@ const validation = (
    // resetina input border spalvas
    document.getElementById("name").classList.remove("ring-red-600");
    document.getElementById("email").classList.remove("ring-red-600");
+   document.getElementById("phone").classList.remove("ring-red-600");
    document.getElementById("password").classList.remove("ring-red-600");
    document.getElementById("confirm_password").classList.remove("ring-red-600");
    // resetina error messages
    setNameErr("");
    setEmailErr("");
+   setPhoneErr("");
    setPasswordErr("");
    setConfirmPassErr("");
 
@@ -59,23 +64,35 @@ const validation = (
       setConfirmPassErr("Slaptažodžiai nesutampa.");
       document.getElementById("confirm_password").classList.add("ring-red-600");
    }
+   if (!form.phone) {
+      noError = false;
+      setPhoneErr("Telefono numerio laukelis negali būti tuščias.");
+      document.getElementById("phone").classList.add("ring-red-600");
+   } else if (form.phone.length != 12) {
+      noError = false;
+      setPhoneErr("Neteisingas telefono numeris.");
+      document.getElementById("phone").classList.add("ring-red-600");
+   }
 
    // returns true jeigu sekmingai pereina validacija
    return noError;
 };
 
-export default function index() {
+export default function RegisterPage() {
    // formos duomenys
    const [form, setForm] = useState({
       name: "",
       email: "",
-      city: "",
+      phone: "",
       password: "",
       confirm_pass: "",
    });
+   // naudojamas del react phone number library
+   const [phone, setPhone] = useState("");
    // Error messages for UI
    const [nameErr, setNameErr] = useState("");
    const [emailErr, setEmailErr] = useState("");
+   const [phoneErr, setPhoneErr] = useState("");
    const [passwordErr, setPasswordErr] = useState("");
    const [confirmPassErr, setConfirmPassErr] = useState("");
    // server-side response message
@@ -91,6 +108,23 @@ export default function index() {
       });
    }
 
+   // function capitalizeString(form) {
+   //    const lowerName = form.name.toLowerCase();
+   //    const capitalizeName =
+   //       lowerName.charAt(0).toUpperCase() + lowerName.slice(1);
+
+   //    console.log("pirmas");
+   //    setForm((prev) => {
+   //       return {
+   //          name: capitalizeName,
+   //          email: "",
+   //          phone: "",
+   //          password: "",
+   //          confirm_pass: "",
+   //       };
+   //    });
+   // }
+
    // HTTP POST request'as
    // issiuncia uzpildytus formos duomenis
    async function onSubmit(e) {
@@ -103,14 +137,13 @@ export default function index() {
          form,
          setNameErr,
          setEmailErr,
+         setPhoneErr,
          setPasswordErr,
          setConfirmPassErr
       );
       if (!success) {
          return;
       }
-
-      // console.log("validacija yra sekminga");
 
       try {
          let response = await fetch("http://localhost:5050/register", {
@@ -136,6 +169,7 @@ export default function index() {
          setForm({
             name: "",
             email: "",
+            phone: "",
             password: "",
             confirm_pass: "",
          });
@@ -163,126 +197,158 @@ export default function index() {
       }
    }, [agreeTerms]);
 
+   // updatina form.phone
+   useEffect(() => {
+      updateForm({ phone: phone });
+   }, [phone]);
+
    // puslapio UI
    return (
-      <div className="bg-slate-100 h-lvh pt-52">
-         <div className="max-w-md mx-auto bg-white px-12 py-10 rounded-lg shadow-md">
-            <h1 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-10">
-               Registracija
-            </h1>
-            <form onSubmit={onSubmit} className="grid gap-3" noValidate>
-               <div>
-                  <label
-                     htmlFor="name"
-                     className="block text-sm font-medium leading-6 text-gray-900"
+      <>
+         <NavigationOff />
+         <div className="h-lvh pt-10">
+            <div className="max-w-md mx-auto bg-gray-200 px-12 py-10 rounded-lg shadow-md">
+               <h1 className="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900 mb-10">
+                  Registracija
+               </h1>
+               <form onSubmit={onSubmit} className="grid gap-3" noValidate>
+                  <div>
+                     <label
+                        htmlFor="name"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                     >
+                        Vardas:
+                     </label>
+                     <input
+                        type="text"
+                        name="name"
+                        id="name"
+                        className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                        value={form.name}
+                        onChange={(e) => updateForm({ name: e.target.value })}
+                     />
+                     {nameErr && (
+                        <p className="mt-2 text-sm text-red-600">{nameErr}</p>
+                     )}
+                  </div>
+                  <div>
+                     <label
+                        htmlFor="email"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                     >
+                        El. paštas:
+                     </label>
+                     <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                        value={form.email}
+                        onChange={(e) => updateForm({ email: e.target.value })}
+                     />
+                     {emailErr && (
+                        <p className="mt-2 text-sm text-red-600">{emailErr}</p>
+                     )}
+                  </div>
+                  <div>
+                     <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                     >
+                        Tel. Numeris:
+                     </label>
+                     <PhoneInput
+                        id="phone"
+                        country="LT"
+                        value={phone}
+                        onChange={setPhone}
+                        className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                        placeholder="370 6XX XXXXX"
+                        maxLength="13"
+                     />
+                     {phoneErr && (
+                        <p className="mt-2 text-sm text-red-600">{phoneErr}</p>
+                     )}
+                  </div>
+                  <div>
+                     <label
+                        htmlFor="password"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                     >
+                        Slaptažodis:
+                     </label>
+                     <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                        value={form.password}
+                        onChange={(e) =>
+                           updateForm({ password: e.target.value })
+                        }
+                     />
+                     {passwordErr && (
+                        <p className="mt-2 text-sm text-red-600">
+                           {passwordErr}
+                        </p>
+                     )}
+                  </div>
+                  <div>
+                     <label
+                        htmlFor="confirm_password"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                     >
+                        Pakartokite slaptažodį:
+                     </label>
+                     <input
+                        type="password"
+                        name="confirm_password"
+                        id="confirm_password"
+                        className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
+                        value={form["confirm_pass"]}
+                        onChange={(e) =>
+                           updateForm({ confirm_pass: e.target.value })
+                        }
+                     />
+                     {confirmPassErr && (
+                        <p className="mt-2 text-sm text-red-600">
+                           {confirmPassErr}
+                        </p>
+                     )}
+                  </div>
+                  <input
+                     id="register-btn"
+                     type="submit"
+                     value="Prisiregistruoti"
+                     disabled={!agreeTerms}
+                     className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4"
+                  />
+                  <div className="mt-4 flex gap-x-3 items-center">
+                     <input
+                        type="checkbox"
+                        id="taisykles"
+                        name="taisykles"
+                        value={agreeTerms}
+                        onChange={(e) => setAgreeTerms(e.target.checked)}
+                        className="accent-indigo-600"
+                     />
+                     <label htmlFor="taisykles">Sutinku su taisyklėmis</label>
+                  </div>
+               </form>
+               {serverErr && (
+                  <p className="mt-2 text-sm text-red-600">{serverErr}</p>
+               )}
+               <p className="mt-8 text-center text-sm text-gray-500">
+                  Jau prisiregistravę?
+                  <Link
+                     to="/login"
+                     className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"
                   >
-                     Vardas:
-                  </label>
-                  <input
-                     type="text"
-                     name="name"
-                     id="name"
-                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
-                     value={form.name}
-                     onChange={(e) => updateForm({ name: e.target.value })}
-                  />
-                  {nameErr && (
-                     <p className="mt-2 text-sm text-red-600">{nameErr}</p>
-                  )}
-               </div>
-               <div>
-                  <label
-                     htmlFor="email"
-                     className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                     El. paštas:
-                  </label>
-                  <input
-                     type="email"
-                     name="email"
-                     id="email"
-                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
-                     value={form.email}
-                     onChange={(e) => updateForm({ email: e.target.value })}
-                  />
-                  {emailErr && (
-                     <p className="mt-2 text-sm text-red-600">{emailErr}</p>
-                  )}
-               </div>
-               <div>
-                  <label
-                     htmlFor="password"
-                     className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                     Slaptažodis:
-                  </label>
-                  <input
-                     type="password"
-                     name="password"
-                     id="password"
-                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
-                     value={form.password}
-                     onChange={(e) => updateForm({ password: e.target.value })}
-                  />
-                  {passwordErr && (
-                     <p className="mt-2 text-sm text-red-600">{passwordErr}</p>
-                  )}
-               </div>
-               <div>
-                  <label
-                     htmlFor="confirm_password"
-                     className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                     Pakartokite slaptažodį:
-                  </label>
-                  <input
-                     type="password"
-                     name="confirm_password"
-                     id="confirm_password"
-                     className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 outline-none"
-                     value={form["confirm_pass"]}
-                     onChange={(e) =>
-                        updateForm({ confirm_pass: e.target.value })
-                     }
-                  />
-                  {confirmPassErr && (
-                     <p className="mt-2 text-sm text-red-600">
-                        {confirmPassErr}
-                     </p>
-                  )}
-               </div>
-               <input
-                  id="register-btn"
-                  type="submit"
-                  value="Prisiregistruoti"
-                  disabled={!agreeTerms}
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4"
-               />
-               <div className="mt-4 flex gap-x-3 items-center">
-                  <input
-                     type="checkbox"
-                     id="taisykles"
-                     name="taisykles"
-                     value={agreeTerms}
-                     onChange={(e) => setAgreeTerms(e.target.checked)}
-                     className="accent-indigo-600"
-                  />
-                  <label htmlFor="taisykles">Sutinku su taisyklėmis</label>
-               </div>
-            </form>
-            {serverErr && (
-               <p className="mt-2 text-sm text-red-600">{serverErr}</p>
-            )}
-            <p className="mt-8 text-center text-sm text-gray-500">
-               Jau prisiregistravę?
-               <Link
-                  to="/login"
-                  className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"
-               >
-                  Prisijungti
-               </Link>
-            </p>
+                     Prisijungti
+                  </Link>
+               </p>
+            </div>
          </div>
-      </div>
+      </>
    );
 }
