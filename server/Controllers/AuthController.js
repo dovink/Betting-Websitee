@@ -5,6 +5,7 @@ import { sendConfirmationEmail } from "../util/emailService.js";
 import Token from "../models/token.js";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import { start } from "repl";
 
 export const register = async (req, res, next) => {
    try {

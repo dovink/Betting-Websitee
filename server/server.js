@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const app = express();
 import cookieParser from "cookie-parser";
 import router from "./routes/AuthRoute.js";
+import euroRouter from "./routes/basketEuroRoute.js";
 
 const ATLAS_URL = process.env.ATLAS_URI;
 
@@ -24,3 +25,4 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/", router);
+app.use("/", euroRouter);

@@ -1,8 +1,9 @@
-import { getUser, login, register,verify, verifyToken, logOut } from "../Controllers/AuthController.js";
+import { getUser, login, register,verify, verifyToken, logOut} from "../Controllers/AuthController.js";
+import {createSeason, AddEuroGame, updateWinner, putEuroVote } from "../Controllers/EuroChampionShip.js";
 import express, { Router } from "express";
 
 const router = express.Router();
-
+// UserAuth
 router.post("/register", register);
 router.post('/login', login);
 router.get("/:id/verify/:token/", verify);
