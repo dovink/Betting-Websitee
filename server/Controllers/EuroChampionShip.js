@@ -1,7 +1,7 @@
 import EuroGames from "../models/EuroleagueGames.js";
 import Season from "../models/euroBasketChampionSeason.js"
 import EuroVotes from "../models/userEuroVotes.js";
-import addEuroPoints from "../util/pointsCal.js";
+import {addEuroPoints, AddPointsForTop4Guess} from "../util/pointsCal.js";
 
 
 export const createSeason = async (req, res) => {
@@ -16,9 +16,44 @@ export const createSeason = async (req, res) => {
   }
 };
 
+export const getCurrentSeason = async(req,res) => {
+  try {
+    const currentSeason = await Season.findOne({ current: true }); 
+    if (!currentSeason) {
+      return res.status(404).send({ message: 'Sezonas nerastas' });
+    }
+    res.status(200).send({ season: currentSeason });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+export const getSeasons = async (req,res) => {
+  try {
+    const seasons = await Season.find();
+    res.status(200).send({ seasons });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+export const getSeasonTeams = async(req,res) =>{
+  try {
+    const { seasonId } = req.params;
+    const season = await Season.findById(seasonId);
+    if (!season) {
+      return res.status(404).send({ message: 'Season not found' });
+    }
+    res.status(200).send({ teams: season.participatingTeams });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
 export const makeTop4Guess = async (req,res) => {
   try{
-    const {seasonId, top4Teams} = req.body;
+    const {seasonId} = req.params;
+    const {top4Teams} = req.body;
     const userId = req.userId;
     
     const existingGuess = await EuroVotes.findOne({ userId, seasonId });
@@ -40,9 +75,23 @@ export const makeTop4Guess = async (req,res) => {
   }
 };
 
+export const getGamesForSeason = async (req,res) => {
+  try {
+    const { seasonId } = req.params;
+    const games = await EuroGames.find({seasonId});
+    if(!games){
+      return res.status(404).send({message: "Nerasta zaidimu"});
+    }
+    res.status(200).send({ games });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
 export const AddEuroGame = async (req, res) => {
     try {
-      const { seasonId, homeTeam, awayTeam, startTime } = req.body;
+      const {seasonId} = req.params;
+      const {homeTeam, awayTeam, startTime } = req.body;
 
 
       const startTimeDate = new Date(startTime);
@@ -57,9 +106,9 @@ export const AddEuroGame = async (req, res) => {
   };
  export const updateWinner =  async (req, res) => {
     try {
-      const { id } = req.params;
+      const { gameId } = req.params;
       const { winner, winningMargin } = req.body;
-      const game = await EuroGames.findById(id).populate('seasonId');
+      const game = await EuroGames.findById(gameId).populate('seasonId');
       if (!game) {
         return res.status(404).send({ message: 'Zaidimas nerastas' });
       }
@@ -75,7 +124,7 @@ export const AddEuroGame = async (req, res) => {
       game.pointsUpdated = true;
       await game.save();
  
-      addEuroPoints(id, winner, winningMargin, seasonId);
+      await addEuroPoints(gameId, winner, winningMargin, seasonId);
 
       return res.send(game);
     } catch (error) {
@@ -122,6 +171,32 @@ export const AddEuroGame = async (req, res) => {
  };
 
  export const updateTop4Winners = async (req,res) => {
-
+try{
+  const { seasonId } = req.params;
+  const { top4Teams } = req.body;
   
+  const season = await Season.findById(seasonId);
+
+  if(!season) {
+    return res.status(404).send({message: "Sezonas nerastas"});
+  }
+
+  if(season.Top4Updated)
+    {
+      season.Top4Updated = false;
+      return res.status(409).send({message: "Sezono laimetojai jau irasyti"});
+    }
+
+    season.Top4Winners = top4Teams;
+    season.Top4Updated = true;
+
+    await season.save();
+
+    await AddPointsForTop4Guess(seasonId, top4Teams);
+
+    return res.status(200).send({message: "Laimetojai sekmingai irasyti"});
+
+ } catch(error){
+  return res.status(500).send({message: "Nepavyko irasyti laimetoju"});
  }
+};

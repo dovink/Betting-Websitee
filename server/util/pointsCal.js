@@ -1,6 +1,6 @@
 import EuroVotes from "../models/userEuroVotes.js";
 
-const addEuroPoints = async (id, winner, margin, seasonId) => {
+export const addEuroPoints = async (id, winner, margin, seasonId) => {
     const votesForGame = await EuroVotes.find({ 'gamePredictions.gameId': id });
     if (votesForGame.length === 0) {
       }
@@ -49,4 +49,47 @@ const addEuroPoints = async (id, winner, margin, seasonId) => {
     }
   }
 }
-export default addEuroPoints;
+
+export const AddPointsForTop4Guess = async (seasonId, top4Teams) => {
+  const votes = await EuroVotes.find({'seasonId': seasonId});
+  if(votes.length === 0){
+    return;
+  }
+
+  for(const vote of votes)
+    {
+      let points = 0;
+      const userId = vote.userId;
+
+      if(vote.top4Teams[0] == top4Teams[0])
+        {
+          points += 8;
+        }
+      if(vote.top4Teams[1] == top4Teams[1])
+        {
+          points += 5;
+        }
+      if(vote.top4Teams[2] == top4Teams[2])
+        {
+          points += 4;
+        }
+      if(vote.top4Teams[3] == top4Teams[3])
+        {
+          points += 3;
+        }
+      
+      
+      for( let i = 0; i< vote.top4Teams.length; i++)
+        {
+          if(top4Teams.includes(vote.top4Teams[i]))
+            {
+              points += 6;
+            }
+        }
+      await EuroVotes.findOneAndUpdate(
+        { userId, seasonId },
+        { $inc: { points } },
+        { upsert: true } // Create new if not exists
+      );
+    }
+}

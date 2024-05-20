@@ -1,0 +1,206 @@
+.form-container {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 1em;
+  }
+  
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group .select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .form-group button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .form-group button:hover {
+    background-color: #0056b3;
+  }
+  
+  .message {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 16px;
+    color: green;
+  }
+  
+  .create-button {
+    position: absolute;
+    top: -130px; 
+    right: -450px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .create-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .relative-container {
+    position: relative;
+    min-height: 100vh;
+    padding-top: 50px;
+  }
+  
+  
+  
+  .relative-container {
+    position: relative;
+  }
+  
+  
+  .ranking {
+    margin-bottom: 1em;
+  }
+  
+  .rank-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5em;
+  }
+  
+  .rank-item label {
+    flex: 1;
+  }
+  
+  .rank-item select {
+    flex: 0 0 50px;
+    margin-left: 1em;
+  }
+  
+  .date-picker-wrapper {
+    position: relative;
+  }
+  
+  .react-datepicker-wrapper,
+  .react-datepicker__input-container {
+    display: block;
+    width: 100%;
+  }
+  
+  .react-datepicker-popper {
+    z-index: 9999;
+  }
+  
+  .select {
+    width: 100%;
+  }
+  
+  .flex {
+    display: flex;
+  }
+  
+  .justify-between {
+    justify-content: space-between;
+  }
+  
+  .items-center {
+    align-items: center;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .fixed {
+    position: fixed;
+  }
+  
+  .top-24 {
+    top: 6rem;
+  }
+  
+  .right-4 {
+    right: 1rem;
+  }
+  
+  .z-50 {
+    z-index: 50;
+  }
+  .vote-button,
+.update-winner-button,
+.create-button,
+.end-season-button,
+.submit-button {
+  padding: 5px 5px;
+  font-size: 16px;
+  color: #fff; /* Text color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.vote-button {
+  background-color: #28a745; /* Green background */
+}
+
+.vote-button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.update-winner-button {
+  background-color: #ffc107; /* Yellow background */
+}
+
+.update-winner-button:hover {
+  background-color: #e0a800; /* Darker yellow on hover */
+}
+
+.create-button {
+  background-color: #007bff; /* Blue background */
+}
+
+.create-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.end-season-button {
+  background-color: #dc3545; /* Red background */
+}
+
+.end-season-button:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+.submit-button {
+  background-color: #007bff; /* Blue background */
+}
+
+.submit-button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}

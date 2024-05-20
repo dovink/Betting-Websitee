@@ -116,11 +116,11 @@ export const verify = async (req, res) => {
 export const verifyToken = (req, res, next) => {
    const cookies = req.headers.cookie;
    if (!cookies) {
-      return res.status(404).send({ message: "Token not found" });
+      return res.status(404).send({ message: "Nerastas Token" });
    }
    const token = cookies.split("=")[1];
    if (!token) {
-      return res.status(404).send({ message: "Token not found" });
+      return res.status(404).send({ message: "Nera Token" });
    }
    jwt.verify(token, process.env.TOKEN_KEY, (err, decoded) => {
       if (err) {
