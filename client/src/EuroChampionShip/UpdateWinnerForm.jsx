@@ -9,6 +9,12 @@ const UpdateWinnerForm = ({ gameId, teams, onWinnerUpdated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const userConfirmed = window.confirm('Ar tikrai norite atnaujinti šį laimėtoją?');
+
+    if (!userConfirmed) {
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:5050/game/${gameId}/update-winner`, {
         method: 'PUT',

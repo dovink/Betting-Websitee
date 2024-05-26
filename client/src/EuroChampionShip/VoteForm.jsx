@@ -9,6 +9,12 @@ const VoteForm = ({ gameId, teams, onVoteSubmitted }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const userConfirmed = window.confirm('Ar tikrai norite atlikti šį spėjimą?');
+
+    if (!userConfirmed) {
+      return;
+    }
+
     try {
       const response = await fetch(`http://localhost:5050/game/${gameId}/vote`, {
         method: 'PUT',

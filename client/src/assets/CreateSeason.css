@@ -51,10 +51,10 @@
     color: green;
   }
   
-  .create-button {
-    position: absolute;
-    top: -130px; 
-    right: -450px;
+  .create-button,
+  .add-game-button,
+  .top4-guess-button,
+  .end-season-button {
     padding: 10px 20px;
     font-size: 16px;
     color: #fff;
@@ -62,145 +62,112 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    z-index: 10;
+    margin: 5px;
   }
   
-  .create-button:hover {
+  .create-button:hover,
+  .add-game-button:hover,
+  .top4-guess-button:hover,
+  .end-season-button:hover {
     background-color: #0056b3;
   }
   
-  .relative-container {
-    position: relative;
-    min-height: 100vh;
-    padding-top: 50px;
-  }
-  
-  
-  
-  .relative-container {
-    position: relative;
-  }
-  
-  
-  .ranking {
-    margin-bottom: 1em;
-  }
-  
-  .rank-item {
+  .main-container {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 0.5em;
   }
   
-  .rank-item label {
+  .sidebar {
+    width: 250px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    white-space: nowrap; /* Prevent line breaks within the sidebar */
+  }
+  
+  .content-container {
     flex: 1;
+    padding: 20px;
   }
   
-  .rank-item select {
-    flex: 0 0 50px;
-    margin-left: 1em;
-  }
-  
-  .date-picker-wrapper {
-    position: relative;
-  }
-  
-  .react-datepicker-wrapper,
-  .react-datepicker__input-container {
-    display: block;
-    width: 100%;
-  }
-  
-  .react-datepicker-popper {
-    z-index: 9999;
-  }
-  
-  .select {
-    width: 100%;
-  }
-  
-  .flex {
+  .top-buttons {
     display: flex;
-  }
-  
-  .justify-between {
-    justify-content: space-between;
-  }
-  
-  .items-center {
+    justify-content: flex-end;
     align-items: center;
+    gap: 10px;
   }
   
-  .mb-4 {
-    margin-bottom: 1rem;
+  .urvas-image {
+    width: 100%;
+    max-width: 600px;
+    display: block;
+    margin: 0 auto;
   }
   
-  .fixed {
-    position: fixed;
+  .buttons-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
   }
   
-  .top-24 {
-    top: 6rem;
-  }
-  
-  .right-4 {
-    right: 1rem;
-  }
-  
-  .z-50 {
-    z-index: 50;
-  }
   .vote-button,
-.update-winner-button,
-.create-button,
-.end-season-button,
-.submit-button {
-  padding: 5px 5px;
-  font-size: 16px;
-  color: #fff; /* Text color */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin: 5px;
-}
-
-.vote-button {
-  background-color: #28a745; /* Green background */
-}
-
-.vote-button:hover {
-  background-color: #218838; /* Darker green on hover */
-}
-
-.update-winner-button {
-  background-color: #ffc107; /* Yellow background */
-}
-
-.update-winner-button:hover {
-  background-color: #e0a800; /* Darker yellow on hover */
-}
-
-.create-button {
-  background-color: #007bff; /* Blue background */
-}
-
-.create-button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
-}
-
-.end-season-button {
-  background-color: #dc3545; /* Red background */
-}
-
-.end-season-button:hover {
-  background-color: #c82333; /* Darker red on hover */
-}
-
-.submit-button {
-  background-color: #007bff; /* Blue background */
-}
-
-.submit-button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
-}
+  .update-winner-button,
+  .submit-button {
+    padding: 5px 5px;
+    font-size: 16px;
+    color: #fff; /* Text color */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+  }
+  
+  .vote-button {
+    background-color: #28a745; /* Green background */
+  }
+  
+  .vote-button:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+  
+  .update-winner-button {
+    background-color: #ffc107; /* Yellow background */
+  }
+  
+  .update-winner-button:hover {
+    background-color: #e0a800; /* Darker yellow on hover */
+  }
+  
+  .submit-button {
+    background-color: #007bff; /* Blue background */
+  }
+  
+  .submit-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  @media (max-width: 768px) {
+    .main-container {
+      flex-direction: column;
+    }
+  
+    .sidebar {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid #dee2e6;
+    }
+  
+    .content-container {
+      width: 100%;
+      margin-top: 20px;
+    }
+  
+    .top-buttons {
+      flex-direction: column;
+    }
+  
+    .buttons-container {
+      flex-direction: column;
+    }
+  }
+  

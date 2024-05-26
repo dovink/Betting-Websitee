@@ -1,0 +1,60 @@
+
+.top-score-board {
+    margin-top: 20px;
+  }
+  
+  .top-score-board h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .top-score-board table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .top-score-board th, .top-score-board td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .top-score-board th {
+    background-color: #f2f2f2;
+  }
+  
+  .scores {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .score-block {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 0 2px;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+    font-weight: bold;
+    border-radius: 3px;
+  }
+  
+  .score-block.yellow {
+    background-color: yellow;
+    color: black;
+  }
+  
+  .score-block.green {
+    background-color: green;
+  }
+  
+  .score-block.blue {
+    background-color: blue;
+  }
+  
+  .score-block.pink {
+    background-color: pink;
+  }
+
+  

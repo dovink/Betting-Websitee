@@ -1,17 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Select from 'react-select';
+import io from 'socket.io-client';
 import './../assets/CreateSeason.css';
 
-const AddGameForm = ({ seasonId, onGameAdded, teams }) => {
+const AddGameForm = ({ seasonId, teams }) => {
   const [homeTeam, setHomeTeam] = useState('');
   const [awayTeam, setAwayTeam] = useState('');
   const [startTime, setStartTime] = useState(new Date());
   const [message, setMessage] = useState('');
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const newSocket = io('http://localhost:5050');
+    setSocket(newSocket);
+    return () => newSocket.close();
+  }, [setSocket]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const userConfirmed = window.confirm('Ar tikrai norite pridėti šį žaidimą?');
+
+    if (!userConfirmed) {
+      return;
+    }
 
     try {
       const response = await fetch(`http://localhost:5050/season/${seasonId}/game`, {
@@ -26,7 +40,7 @@ const AddGameForm = ({ seasonId, onGameAdded, teams }) => {
       const data = await response.json();
       if (response.ok) {
         setMessage('Žaidimas pridėtas');
-        onGameAdded();
+        socket.emit('gameAdded', data);
       } else {
         setMessage(data.message || 'Nepavyko pridėti žaidimo');
       }

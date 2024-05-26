@@ -2,6 +2,7 @@ import EuroGames from "../models/EuroleagueGames.js";
 import Season from "../models/euroBasketChampionSeason.js"
 import EuroVotes from "../models/userEuroVotes.js";
 import {addEuroPoints, AddPointsForTop4Guess} from "../util/pointsCal.js";
+import User from "../models/userSchema.js";
 
 
 export const createSeason = async (req, res) => {
@@ -199,4 +200,29 @@ try{
  } catch(error){
   return res.status(500).send({message: "Nepavyko irasyti laimetoju"});
  }
+};
+
+export const LeaderBoard = async (req,res) => {
+  const { seasonId } = req.params;
+  try{
+    const topUsers = await EuroVotes.find({seasonId})
+    .sort({points: -1})
+    .limit(5);
+
+    const populatedTopUsers = await Promise.all(topUsers.map(async (vote) => {
+      const user = await User.findById(vote.userId).select('name');
+      return {
+        ...vote.toObject(),
+        userName: user ? user.name : 'Unknown',
+      };
+    }));
+
+    if(!topUsers){
+      return res.status(404).json({message: "Nera priskirtu tasku uz si sezona"});
+    }
+    res.status(200).json({ topUsers: populatedTopUsers });
+
+  } catch(error){
+    return res.status(500).send ({message: "Nepavyko gauti rezultatu"});
+  }
 };

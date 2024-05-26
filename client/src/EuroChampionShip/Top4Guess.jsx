@@ -2,14 +2,39 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import './../assets/CreateSeason.css';
 
-const UpdateTop4Winners = ({ seasonId, teams }) => {
-  const [top4Teams, setTop4Teams] = useState([]);
+const Top4Guess = ({ seasonId }) => {
+  const [participatingTeams, setParticipatingTeams] = useState([]);
+  const [selectedTeams, setSelectedTeams] = useState([]);
   const [rankedTeams, setRankedTeams] = useState([]);
   const [message, setMessage] = useState('');
 
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await fetch(`http://localhost:5050/season/${seasonId}/teams`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setParticipatingTeams(data.teams.map(team => ({ value: team, label: team })));
+        } else {
+          setMessage(data.message || 'Napvyko rasti komandų');
+        }
+      } catch (error) {
+        setMessage(error.message || 'Nepavyko rasti komandų');
+      }
+    };
+
+    fetchTeams();
+  }, [seasonId]);
+
   const handleChange = (selectedOptions) => {
     if (selectedOptions.length <= 4) {
-      setTop4Teams(selectedOptions);
+      setSelectedTeams(selectedOptions);
       setRankedTeams(selectedOptions.map((team, index) => ({
         ...team,
         rank: index + 1,
@@ -27,14 +52,20 @@ const UpdateTop4Winners = ({ seasonId, teams }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const userConfirmed = window.confirm('Ar tikrai norite pateikti šį spėjimą?');
+
+    if (!userConfirmed) {
+      return;
+    }
+
     if (rankedTeams.length !== 4 || new Set(rankedTeams.map(t => t.rank)).size !== 4) {
       setMessage('Pasirinkite savo TOP4 šio sezono komandas');
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:5050/season/${seasonId}/end-season`, {
-        method: 'PUT',
+      const response = await fetch(`http://localhost:5050/season/${seasonId}/top4guess`, {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -45,33 +76,33 @@ const UpdateTop4Winners = ({ seasonId, teams }) => {
       const data = await response.json();
       if (response.ok) {
         setMessage(data.message);
-        setTop4Teams([]);
+        setSelectedTeams([]);
         setRankedTeams([]);
       } else {
-        setMessage(data.message || 'Nepavyko atnaujinti sezono');
+        setMessage(data.message || 'Error making guess');
       }
     } catch (error) {
-      setMessage(error.message || 'Nepavyko atnaujinti sezono');
+      setMessage(error.message || 'Error making guess');
     }
   };
 
   return (
     <div className="form-container">
-      <h2>Irašykite TOP4 komandas ir pabaikite sezoną</h2>
+      <h2>Pasirinkite savo TOP4 šio sezono komandas</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label>TOP 4 komandos:</label>
+          <label>Mano TOP4 komandos:</label>
           <Select
             isMulti
-            options={teams}
-            value={top4Teams}
+            options={participatingTeams}
+            value={selectedTeams}
             onChange={handleChange}
             className="basic-multi-select"
             classNamePrefix="select"
-            placeholder="Pasirinkite 4 komandas"
+            placeholder="Select top 4 teams"
           />
         </div>
-        {top4Teams.length === 4 && (
+        {selectedTeams.length === 4 && (
           <div className="ranking">
             {rankedTeams.map((team, index) => (
               <div key={team.value} className="rank-item">
@@ -91,7 +122,7 @@ const UpdateTop4Winners = ({ seasonId, teams }) => {
           </div>
         )}
         <div className="form-group">
-          <button type="submit">Pabaigti sezoną</button>
+          <button type="submit">Pateikti savo spėjima</button>
         </div>
       </form>
       {message && <p className="message">{message}</p>}
@@ -99,4 +130,4 @@ const UpdateTop4Winners = ({ seasonId, teams }) => {
   );
 };
 
-export default UpdateTop4Winners;
+export default Top4Guess;

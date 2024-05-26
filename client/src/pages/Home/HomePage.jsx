@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '../../components/Navigation';
 import Urvas from '../../assets/urvas.jpg';
 import Sidebar from '../../components/Sidebar';
-import CreateSeason from '../../Euroleague Components/CreateSeason';
-import Top4Guess from '../../Euroleague Components/Top4Guess';
-import SeasonsDropdown from '../../Euroleague Components/SeasonDropdown';
-import GamesList from '../../Euroleague Components/GameList';
-import AddGameForm from '../../Euroleague Components/AddGameForm';
-import UpdateTop4Winners from '../../Euroleague Components/UpdateTop4Winners';
+import CreateSeason from '../../EuroChampionShip/CreateSeason';
+import TopScoreBoard from '../../EuroChampionShip/TopScoreBoard';
+import Top4Guess from '../../EuroChampionShip/Top4Guess';
+import SeasonsDropdown from '../../EuroChampionShip/SeasonDropdown';
+import GamesList from '../../EuroChampionShip/GameList';
+import AddGameForm from '../../EuroChampionShip/AddGameForm';
+import UpdateTop4Winners from '../../EuroChampionShip/UpdateTop4Winners';
 import './../../assets/CreateSeason.css';
-
 
 export default function HomePage() {
   const [user, setUser] = useState('');
@@ -20,6 +20,7 @@ export default function HomePage() {
   const [showAddGameForm, setShowAddGameForm] = useState(false);
   const [showCreateSeasonForm, setShowCreateSeasonForm] = useState(false);
   const [showEndSeasonForm, setShowEndSeasonForm] = useState(false);
+  const [showTop4GuessForm, setShowTop4GuessForm] = useState(false);
   const navigate = useNavigate();
 
   const fetchUserInfo = async () => {
@@ -81,6 +82,8 @@ export default function HomePage() {
     setSelectedSeasonId(seasonId);
     fetchTeams(seasonId);
     setShowAddGameForm(false);
+    setShowTop4GuessForm(false);
+    setShowEndSeasonForm(false);
   };
 
   const handleGameAdded = () => {};
@@ -88,57 +91,77 @@ export default function HomePage() {
   return (
     <>
       <Navigation user={user} />
-      <div className="relative-container">
-        <div className="max-w-screen-xl mx-auto mt-20 flex px-10">
+      <div className="main-container">
+        <div className="sidebar">
           <Sidebar onOptionClick={handleOptionClick} />
-          <div className="w-4/6 relative">
-            {selectedOption === 'Eurolyga' ? (
-              <>
+        </div>
+        <div className="content-container">
+          {selectedOption === 'Eurolyga' ? (
+            <>
+              <div className="top-buttons">
                 <button
                   className="create-button"
                   onClick={() => setShowCreateSeasonForm(!showCreateSeasonForm)}
                 >
                   {showCreateSeasonForm ? 'Paslėpti formą' : 'Sukurti sezoną'}
                 </button>
-                {showCreateSeasonForm && (
-                  <CreateSeason
-                    onSeasonCreated={handleSeasonCreated}
-                    formVisible={showCreateSeasonForm}
-                    setFormVisible={setShowCreateSeasonForm}
-                  />
-                )}
-                <div className="season-selection-container">
-                  <SeasonsDropdown onSelect={handleSeasonSelect} />
-                  {selectedSeasonId && (
+                <SeasonsDropdown onSelect={handleSeasonSelect} />
+              </div>
+              {showCreateSeasonForm && (
+                <CreateSeason
+                  onSeasonCreated={handleSeasonCreated}
+                  formVisible={showCreateSeasonForm}
+                  setFormVisible={setShowCreateSeasonForm}
+                />
+              )}
+              {selectedSeasonId && (
+                <>
+                  <TopScoreBoard seasonId={selectedSeasonId} />
+                  <GamesList seasonId={selectedSeasonId} teams={participatingTeams} />
+                  <div className="buttons-container">
+                    <button
+                      className="add-game-button"
+                      onClick={() => setShowAddGameForm(!showAddGameForm)}
+                    >
+                      {showAddGameForm ? 'Paslėpti' : 'Pridėti naują žaidimą'}
+                    </button>
+                    <button
+                      className="top4-guess-button"
+                      onClick={() => setShowTop4GuessForm(!showTop4GuessForm)}
+                    >
+                      {showTop4GuessForm ? 'Paslėpti' : 'Top 4 spėjimas'}
+                    </button>
                     <button
                       className="end-season-button"
                       onClick={() => setShowEndSeasonForm(!showEndSeasonForm)}
                     >
                       {showEndSeasonForm ? 'Paslėpti' : 'Pabaigti sezoną'}
                     </button>
+                  </div>
+                  {showAddGameForm && (
+                    <AddGameForm
+                      seasonId={selectedSeasonId}
+                      onGameAdded={handleGameAdded}
+                      teams={participatingTeams}
+                    />
                   )}
-                </div>
-                {selectedSeasonId && (
-                  <>
-                    <GamesList seasonId={selectedSeasonId} teams={participatingTeams} />
-                    <button onClick={() => setShowAddGameForm(!showAddGameForm)}>
-                      {showAddGameForm ? 'Paslėpti' : 'Pridėti naują žaidimą'}
-                    </button>
-                    {showAddGameForm && (
-                      <AddGameForm seasonId={selectedSeasonId} onGameAdded={handleGameAdded} teams={participatingTeams} />
-                    )}
-                    {showEndSeasonForm && (
-                      <div className="end-season-form-container">
-                        <UpdateTop4Winners seasonId={selectedSeasonId} teams={participatingTeams} />
-                      </div>
-                    )}
-                  </>
-                )}
-              </>
-            ) : (
-              <img src={Urvas} alt="octopus caricature" />
-            )}
-          </div>
+                  {showTop4GuessForm && (
+                    <Top4Guess
+                      seasonId={selectedSeasonId}
+                    />
+                  )}
+                  {showEndSeasonForm && (
+                    <UpdateTop4Winners
+                      seasonId={selectedSeasonId}
+                      teams={participatingTeams}
+                    />
+                  )}
+                </>
+              )}
+            </>
+          ) : (
+            <img src={Urvas} alt="octopus caricature" className="urvas-image" />
+          )}
         </div>
       </div>
     </>
