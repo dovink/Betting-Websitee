@@ -6,7 +6,7 @@ import UpdateWinnerForm from './UpdateWinnerForm';
 import io from 'socket.io-client';
 import './../assets/GameList.css';
 
-const GamesList = ({ seasonId, teams = [] }) => {
+const GamesList = ({ seasonId, teams = [], userRole }) => {
   const [games, setGames] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null);
   const [showUpdateWinnerForm, setShowUpdateWinnerForm] = useState(null);
@@ -82,17 +82,21 @@ const GamesList = ({ seasonId, teams = [] }) => {
                   />
                 </div>
               )}
-              <button className="update-winner-button" onClick={() => setShowUpdateWinnerForm(game._id)}>
-                Irasyti laimetoja
-              </button>
-              {showUpdateWinnerForm === game._id && (
-                <div className="update-winner-form-container">
-                  <UpdateWinnerForm
-                    gameId={game._id}
-                    teams={[game.homeTeam, game.awayTeam].map(team => ({ value: team, label: team }))}
-                    onWinnerUpdated={handleWinnerUpdated}
-                  />
-                </div>
+              {userRole === 'admin' && (
+                <>
+                  <button className="update-winner-button" onClick={() => setShowUpdateWinnerForm(game._id)}>
+                    Irasyti laimetoja
+                  </button>
+                  {showUpdateWinnerForm === game._id && (
+                    <div className="update-winner-form-container">
+                      <UpdateWinnerForm
+                        gameId={game._id}
+                        teams={[game.homeTeam, game.awayTeam].map(team => ({ value: team, label: team }))}
+                        onWinnerUpdated={handleWinnerUpdated}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </li>
           );

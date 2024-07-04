@@ -13,7 +13,7 @@ import UpdateTop4Winners from '../../EuroChampionShip/UpdateTop4Winners';
 import './../../assets/CreateSeason.css';
 
 export default function HomePage() {
-  const [user, setUser] = useState('');
+  const [user, setUser] = useState({});
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedSeasonId, setSelectedSeasonId] = useState(null);
   const [participatingTeams, setParticipatingTeams] = useState([]);
@@ -99,15 +99,17 @@ export default function HomePage() {
           {selectedOption === 'Eurolyga' ? (
             <>
               <div className="top-buttons">
-                <button
-                  className="create-button"
-                  onClick={() => setShowCreateSeasonForm(!showCreateSeasonForm)}
-                >
-                  {showCreateSeasonForm ? 'Paslėpti formą' : 'Sukurti sezoną'}
-                </button>
+                {user.role === 'admin' && (
+                  <button
+                    className="create-button"
+                    onClick={() => setShowCreateSeasonForm(!showCreateSeasonForm)}
+                  >
+                    {showCreateSeasonForm ? 'Paslėpti formą' : 'Sukurti sezoną'}
+                  </button>
+                )}
                 <SeasonsDropdown onSelect={handleSeasonSelect} />
               </div>
-              {showCreateSeasonForm && (
+              {showCreateSeasonForm && user.role === 'admin' && (
                 <CreateSeason
                   onSeasonCreated={handleSeasonCreated}
                   formVisible={showCreateSeasonForm}
@@ -117,28 +119,32 @@ export default function HomePage() {
               {selectedSeasonId && (
                 <>
                   <TopScoreBoard seasonId={selectedSeasonId} />
-                  <GamesList seasonId={selectedSeasonId} teams={participatingTeams} />
+                  <GamesList seasonId={selectedSeasonId} teams={participatingTeams} userRole={user.role} />
                   <div className="buttons-container">
-                    <button
-                      className="add-game-button"
-                      onClick={() => setShowAddGameForm(!showAddGameForm)}
-                    >
-                      {showAddGameForm ? 'Paslėpti' : 'Pridėti naują žaidimą'}
-                    </button>
+                    {user.role === 'admin' && (
+                      <button
+                        className="add-game-button"
+                        onClick={() => setShowAddGameForm(!showAddGameForm)}
+                      >
+                        {showAddGameForm ? 'Paslėpti' : 'Pridėti naują žaidimą'}
+                      </button>
+                    )}
                     <button
                       className="top4-guess-button"
                       onClick={() => setShowTop4GuessForm(!showTop4GuessForm)}
                     >
                       {showTop4GuessForm ? 'Paslėpti' : 'Top 4 spėjimas'}
                     </button>
-                    <button
-                      className="end-season-button"
-                      onClick={() => setShowEndSeasonForm(!showEndSeasonForm)}
-                    >
-                      {showEndSeasonForm ? 'Paslėpti' : 'Pabaigti sezoną'}
-                    </button>
+                    {user.role === 'admin' && (
+                      <button
+                        className="end-season-button"
+                        onClick={() => setShowEndSeasonForm(!showEndSeasonForm)}
+                      >
+                        {showEndSeasonForm ? 'Paslėpti' : 'Pabaigti sezoną'}
+                      </button>
+                    )}
                   </div>
-                  {showAddGameForm && (
+                  {showAddGameForm && user.role === 'admin' && (
                     <AddGameForm
                       seasonId={selectedSeasonId}
                       onGameAdded={handleGameAdded}
@@ -150,7 +156,7 @@ export default function HomePage() {
                       seasonId={selectedSeasonId}
                     />
                   )}
-                  {showEndSeasonForm && (
+                  {showEndSeasonForm && user.role === 'admin' && (
                     <UpdateTop4Winners
                       seasonId={selectedSeasonId}
                       teams={participatingTeams}

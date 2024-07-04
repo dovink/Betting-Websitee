@@ -11,6 +11,7 @@ const userSchema = new mangoose.Schema({
    phone: { type: Number, required: [true, "Tel. numeris yra reikalingas"] },
    password: { type: String, required: [true, "Slaptazodis yra reikalingas"] },
    verified: { type: Boolean, default: false },
+   role: { type: String, enum: ['user', 'admin'], default: 'user' },
 });
 
 userSchema.pre("save", async function () {
