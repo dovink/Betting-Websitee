@@ -8,9 +8,11 @@ const euroRouter = express.Router();
 euroRouter.post("/season", verifyToken, createSeason);
 euroRouter.post("/season/:seasonId/top4guess", verifyToken, makeTop4Guess);
 euroRouter.post ("/season/:seasonId/game", verifyToken, AddEuroGame);
+
 euroRouter.put ("/game/:gameId/update-winner", verifyToken, updateWinner);
 euroRouter.put("/game/:gameId/vote", verifyToken, putEuroVote);
 euroRouter.put("/season/:seasonId/end-season", verifyToken, updateTop4Winners);
+
 euroRouter.get("/season/:seasonId/teams", verifyToken, getSeasonTeams);
 euroRouter.get('/season/current',verifyToken, getCurrentSeason);
 euroRouter.get('/seasons', verifyToken, getSeasons);

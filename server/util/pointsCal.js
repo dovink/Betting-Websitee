@@ -1,4 +1,4 @@
-import EuroVotes from "../models/userEuroVotes.js";
+import EuroVotes from "../models/BasketBall/userEuroVotes.js";
 
 export const addEuroPoints = async (id, winner, margin, seasonId) => {
     const votesForGame = await EuroVotes.find({ 'gamePredictions.gameId': id });

@@ -5,6 +5,7 @@ const app = express();
 import cookieParser from "cookie-parser";
 import router from "./routes/AuthRoute.js";
 import euroRouter from "./routes/basketEuroRoute.js";
+import footBallRouter from "./routes/footBallRoute.js";
 
 const ATLAS_URL = process.env.ATLAS_URI;
 
@@ -26,3 +27,4 @@ app.use(cookieParser());
 
 app.use("/", router);
 app.use("/", euroRouter);
+app.use("/", footBallRouter);

@@ -3,25 +3,12 @@ import { format, parseISO, isBefore } from 'date-fns';
 import { lt } from 'date-fns/locale'; // Import Lithuanian locale
 import VoteForm from './VoteForm';
 import UpdateWinnerForm from './UpdateWinnerForm';
-import io from 'socket.io-client';
 import './../assets/GameList.css';
 
 const GamesList = ({ seasonId, teams = [], userRole }) => {
   const [games, setGames] = useState([]);
   const [selectedGame, setSelectedGame] = useState(null);
   const [showUpdateWinnerForm, setShowUpdateWinnerForm] = useState(null);
-  const [socket, setSocket] = useState(null);
-
-  useEffect(() => {
-    const newSocket = io('http://localhost:5050');
-    setSocket(newSocket);
-
-    newSocket.on('gameAdded', (newGame) => {
-      setGames((prevGames) => [newGame, ...prevGames]);
-    });
-
-    return () => newSocket.close();
-  }, [setSocket]);
 
   useEffect(() => {
     const fetchGames = async () => {

@@ -81,7 +81,7 @@
     padding: 20px;
     background-color: #f8f9fa;
     border-right: 1px solid #dee2e6;
-    white-space: nowrap; /* Prevent line breaks within the sidebar */
+    white-space: nowrap;
   }
   
   .content-container {
@@ -115,7 +115,7 @@
   .submit-button {
     padding: 5px 5px;
     font-size: 16px;
-    color: #fff; /* Text color */
+    color: #fff; 
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -123,27 +123,27 @@
   }
   
   .vote-button {
-    background-color: #28a745; /* Green background */
+    background-color: #28a745;
   }
   
   .vote-button:hover {
-    background-color: #218838; /* Darker green on hover */
+    background-color: #218838; 
   }
   
   .update-winner-button {
-    background-color: #ffc107; /* Yellow background */
+    background-color: #ffc107;
   }
   
   .update-winner-button:hover {
-    background-color: #e0a800; /* Darker yellow on hover */
+    background-color: #e0a800; 
   }
   
   .submit-button {
-    background-color: #007bff; /* Blue background */
+    background-color: #007bff; 
   }
   
   .submit-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #0056b3;
   }
   
   @media (max-width: 768px) {

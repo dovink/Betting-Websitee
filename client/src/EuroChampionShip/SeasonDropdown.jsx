@@ -38,8 +38,7 @@ const SeasonsDropdown = ({ onSelect }) => {
       options={seasons}
       value={selectedSeason}
       onChange={handleChange}
-      className="basic-single"
-      classNamePrefix="select"
+      className="w-3/4 text-center"
       placeholder="Pasirinkite sezona"
     />
   );

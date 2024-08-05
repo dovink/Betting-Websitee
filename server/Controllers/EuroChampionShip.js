@@ -1,7 +1,7 @@
-import EuroGames from "../models/EuroleagueGames.js";
-import Season from "../models/euroBasketChampionSeason.js"
-import EuroVotes from "../models/userEuroVotes.js";
-import {addEuroPoints, AddPointsForTop4Guess} from "../util/pointsCal.js";
+import EuroGames from "../models/BasketBall/EuroleagueGames.js";
+import Season from "../models/BasketBall/euroBasketChampionSeason.js";
+import EuroVotes from "../models/BasketBall/userEuroVotes.js";
+import { addEuroPoints, AddPointsForTop4Guess } from "../util/pointsCal.js";
 import User from "../models/userSchema.js";
 
 
@@ -17,9 +17,9 @@ export const createSeason = async (req, res) => {
   }
 };
 
-export const getCurrentSeason = async(req,res) => {
+export const getCurrentSeason = async (req, res) => {
   try {
-    const currentSeason = await Season.findOne({ current: true }); 
+    const currentSeason = await Season.findOne({ current: true });
     if (!currentSeason) {
       return res.status(404).send({ message: 'Sezonas nerastas' });
     }
@@ -29,7 +29,7 @@ export const getCurrentSeason = async(req,res) => {
   }
 };
 
-export const getSeasons = async (req,res) => {
+export const getSeasons = async (req, res) => {
   try {
     const seasons = await Season.find();
     res.status(200).send({ seasons });
@@ -38,7 +38,7 @@ export const getSeasons = async (req,res) => {
   }
 };
 
-export const getSeasonTeams = async(req,res) =>{
+export const getSeasonTeams = async (req, res) => {
   try {
     const { seasonId } = req.params;
     const season = await Season.findById(seasonId);
@@ -51,12 +51,12 @@ export const getSeasonTeams = async(req,res) =>{
   }
 };
 
-export const makeTop4Guess = async (req,res) => {
-  try{
-    const {seasonId} = req.params;
-    const {top4Teams} = req.body;
+export const makeTop4Guess = async (req, res) => {
+  try {
+    const { seasonId } = req.params;
+    const { top4Teams } = req.body;
     const userId = req.userId;
-    
+
     const existingGuess = await EuroVotes.findOne({ userId, seasonId });
     if (existingGuess && existingGuess.hasGuessedTop4) {
       return res.status(400).send({ message: 'Spejimas kas pateks i TOP4 jau atliktas' });
@@ -76,12 +76,12 @@ export const makeTop4Guess = async (req,res) => {
   }
 };
 
-export const getGamesForSeason = async (req,res) => {
+export const getGamesForSeason = async (req, res) => {
   try {
     const { seasonId } = req.params;
-    const games = await EuroGames.find({seasonId});
-    if(!games){
-      return res.status(404).send({message: "Nerasta zaidimu"});
+    const games = await EuroGames.find({ seasonId });
+    if (!games) {
+      return res.status(404).send({ message: "Nerasta zaidimu" });
     }
     res.status(200).send({ games });
   } catch (error) {
@@ -90,102 +90,100 @@ export const getGamesForSeason = async (req,res) => {
 };
 
 export const AddEuroGame = async (req, res) => {
-    try {
-      const {seasonId} = req.params;
-      const {homeTeam, awayTeam, startTime } = req.body;
+  try {
+    const { seasonId } = req.params;
+    const { homeTeam, awayTeam, startTime } = req.body;
 
 
-      const startTimeDate = new Date(startTime);
+    const startTimeDate = new Date(startTime);
 
-      const game = new EuroGames({ seasonId, homeTeam, awayTeam, startTime: startTimeDate });
-      console.log(game);
-      await game.save();
-      return res.status(201).send(game);
-    } catch (error) {
-      return res.status(500).send({ message: error.message });
-    }
-  };
- export const updateWinner =  async (req, res) => {
-    try {
-      const { gameId } = req.params;
-      const { winner, winningMargin } = req.body;
-      const game = await EuroGames.findById(gameId).populate('seasonId');
-      if (!game) {
-        return res.status(404).send({ message: 'Zaidimas nerastas' });
-      }
-      if(game.pointsUpdated)
-      {
-        return res.status(404).send({message: "Zaidimo rezultatai jau irasyti"})
-      }
-
-      const seasonId = game.seasonId._id;
-
-      game.winner = winner;
-      game.winningMargin = winningMargin;
-      game.pointsUpdated = true;
-      await game.save();
- 
-      await addEuroPoints(gameId, winner, winningMargin, seasonId);
-
-      return res.send(game);
-    } catch (error) {
-      return res.status(500).send({ message: error.message });
-    }
-  };
- 
-  export const putEuroVote = async (req,res) => {
-    try{
-     const { gameId } = req.params;
-     const userId = req.userId;
-     const { winner, margin } = req.body;
- 
-     // ar zaidimas egzistuoja
-     const game = await EuroGames.findById(gameId).populate('seasonId');
-     if (!game) {
-       return res.status(404).json({ message: 'Zaidimas nerastas' });
-     }
-
-     const seasonId = game.seasonId._id;
- 
-     // Patikrinti ar zaidimas jau prasidejo
-     const currentTime = new Date();
-     if (currentTime >= game.startTime) {
-       return res.status(400).json({ message: 'Zaidimas jau prasidejo' });
-     }
- 
-     const existingVote = await EuroVotes.findOne({ userId, 'gamePredictions.gameId': gameId });
-     if (existingVote) {
-       return res.status(400).send({ message: 'Uz si zaidima jau balsavote' });
-     }
- 
-     // Sukurti nauja balsa
-     const updatedVote = await EuroVotes.findOneAndUpdate(
-      { userId,seasonId },
-      { $push: { gamePredictions: { gameId, winner, margin} } },
-      { new: true, upsert: true }
-  );
-     await updatedVote.save();
-     res.status(201).send(updatedVote);
-   } catch (error) {
-     res.status(500).send({ message: error.message });
-   }
- };
-
- export const updateTop4Winners = async (req,res) => {
-try{
-  const { seasonId } = req.params;
-  const { top4Teams } = req.body;
-  
-  const season = await Season.findById(seasonId);
-
-  if(!season) {
-    return res.status(404).send({message: "Sezonas nerastas"});
+    const game = new EuroGames({ seasonId, homeTeam, awayTeam, startTime: startTimeDate });
+    console.log(game);
+    await game.save();
+    return res.status(201).send(game);
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
   }
+};
+export const updateWinner = async (req, res) => {
+  try {
+    const { gameId } = req.params;
+    const { winner, winningMargin } = req.body;
+    const game = await EuroGames.findById(gameId).populate('seasonId');
+    if (!game) {
+      return res.status(404).json({ message: 'Zaidimas nerastas' });
+    }
+    if (game.pointsUpdated) {
+      return res.status(404).json({ message: "Zaidimo rezultatai jau irasyti" })
+    }
 
-  if(season.Top4Updated)
-    {
+    const seasonId = game.seasonId._id;
+
+    game.winner = winner;
+    game.winningMargin = winningMargin;
+    game.pointsUpdated = true;
+    await game.save();
+
+    await addEuroPoints(gameId, winner, winningMargin, seasonId);
+
+    return res.send(game);
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
+  }
+};
+
+export const putEuroVote = async (req, res) => {
+  try {
+    const { gameId } = req.params;
+    const userId = req.userId;
+    const { winner, margin } = req.body;
+
+    // ar zaidimas egzistuoja
+    const game = await EuroGames.findById(gameId).populate('seasonId');
+    if (!game) {
+      return res.status(404).json({ message: 'Zaidimas nerastas' });
+    }
+
+    const seasonId = game.seasonId._id;
+
+    // Patikrinti ar zaidimas jau prasidejo
+    const currentTime = new Date();
+    if (currentTime >= game.startTime) {
+      return res.status(400).json({ message: 'Zaidimas jau prasidejo' });
+    }
+
+    const existingVote = await EuroVotes.findOne({ userId, 'gamePredictions.gameId': gameId });
+    if (existingVote) {
+      return res.status(400).json({ message: 'Uz si zaidima jau balsavote' });
+    }
+
+    // Sukurti nauja balsa
+    const updatedVote = await EuroVotes.findOneAndUpdate(
+      { userId, seasonId },
+      { $push: { gamePredictions: { gameId, winner, margin } } },
+      { new: true, upsert: true }
+    );
+    await updatedVote.save();
+    res.status(201).send(updatedVote);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+export const updateTop4Winners = async (req, res) => {
+  try {
+    const { seasonId } = req.params;
+    const { top4Teams } = req.body;
+
+    const season = await Season.findById(seasonId);
+
+    if (!season) {
+      return res.status(404).send({ message: "Sezonas nerastas" });
+    }
+
+    if (season.Top4Updated) {
       season.Top4Updated = false;
-      return res.status(409).send({message: "Sezono laimetojai jau irasyti"});
+      return res.status(409).send({ message: "Sezono laimetojai jau irasyti" });
     }
 
     season.Top4Winners = top4Teams;
@@ -195,34 +193,34 @@ try{
 
     await AddPointsForTop4Guess(seasonId, top4Teams);
 
-    return res.status(200).send({message: "Laimetojai sekmingai irasyti"});
+    return res.status(200).send({ message: "Laimetojai sekmingai irasyti" });
 
- } catch(error){
-  return res.status(500).send({message: "Nepavyko irasyti laimetoju"});
- }
+  } catch (error) {
+    return res.status(500).send({ message: "Nepavyko irasyti laimetoju" });
+  }
 };
 
-export const LeaderBoard = async (req,res) => {
+export const LeaderBoard = async (req, res) => {
   const { seasonId } = req.params;
-  try{
-    const topUsers = await EuroVotes.find({seasonId})
-    .sort({points: -1})
-    .limit(5);
+  try {
+    const topUsers = await EuroVotes.find({ seasonId })
+      .sort({ points: -1 })
+      .limit(5);
 
     const populatedTopUsers = await Promise.all(topUsers.map(async (vote) => {
       const user = await User.findById(vote.userId).select('name');
       return {
         ...vote.toObject(),
-        userName: user ? user.name : 'Unknown',
+        userName: user ? user.name : 'Nezinomas',
       };
     }));
 
-    if(!topUsers){
-      return res.status(404).json({message: "Nera priskirtu tasku uz si sezona"});
+    if (!topUsers) {
+      return res.status(404).json({ message: "Nera priskirtu tasku uz si sezona" });
     }
     res.status(200).json({ topUsers: populatedTopUsers });
 
-  } catch(error){
-    return res.status(500).send ({message: "Nepavyko gauti rezultatu"});
+  } catch (error) {
+    return res.status(500).send({ message: "Nepavyko gauti rezultatu" });
   }
 };

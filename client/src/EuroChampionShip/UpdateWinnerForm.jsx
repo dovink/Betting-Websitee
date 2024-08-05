@@ -9,7 +9,7 @@ const UpdateWinnerForm = ({ gameId, teams, onWinnerUpdated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const userConfirmed = window.confirm('Ar tikrai norite atnaujinti šį laimėtoją?');
+    const userConfirmed = window.confirm('Ar tikrai norite įrašyti šį laimėtoją?');
 
     if (!userConfirmed) {
       return;

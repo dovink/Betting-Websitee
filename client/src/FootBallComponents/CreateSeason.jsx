@@ -14,8 +14,19 @@ const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if(year=== null){
+      setMessage("Pasirinkite sezono metus")
+      return
+    }
+
+    if(participatingTeams.length === 0)
+    {
+      setMessage("Pasirinkite dalyvaujančias šalis")
+      return;
+    }
+
     try {
-      const response = await fetch('http://localhost:5050/season', {
+      const response = await fetch("http://localhost:5050/footballSeason", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,20 +38,20 @@ const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
         }),
         credentials: 'include',
       });
-
-      const data = await response.json();
+      const data = await response.json()
+      console.log(data.newSeason)
       if (response.ok) {
-        setMessage(data.message);
+        setMessage("Sezonas sukurtas sekmingai");
         setName('');
         setYear(null);
         setParticipatingTeams([]);
-        setFormVisible(false);
-        onSeasonCreated();
+        onSeasonCreated(data.newSeason);
+        setFormVisible(true);
       } else {
-        setMessage(data.message || 'Nepavyko sukurti sezono');
+        setMessage('Nepavyko sukurti sezono(patikrinkite ar sezono vardas yra unikalus)');
       }
     } catch (error) {
-      setMessage(error.message || 'Nepavyko sukurti sezono');
+      setMessage('Nepavyko sukurti sezono');
     }
   };
 
@@ -48,7 +59,7 @@ const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
     <div className="form-container">
       {formVisible && (
         <>
-          <h2 className='text-lg text-pretty'>Naujas sezonas</h2>
+          <h2 className='font-bold'>Naujas sezonas</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Pavadinimas:</label>
@@ -70,7 +81,7 @@ const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
               />
             </div>
             <div className="form-group">
-              <label>Dalyvaujančios šalys</label>
+              <label>Dalyvaujančios šalys:</label>
               <Select
                 isMulti
                 options={countriesLT}
@@ -78,13 +89,14 @@ const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
                 onChange={(selectedOptions) => setParticipatingTeams(selectedOptions)}
                 className="basic-multi-select"
                 classNamePrefix="select"
+                placeholder = "Pasirinkite..."
               />
             </div>
             <div className="form-group">
               <button type="submit">Sukurti sezona</button>
             </div>
           </form>
-          {message && <p className="message">{message}</p>}
+          {message && <p className="text-red-700 text-center font-medium">{message}</p>}
         </>
       )}
     </div>
