@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Nustatymai from "../../components/Nustatymai";
+import Nustatymai from "../../components/Nustatymai/Nustatymai";
 import Pasiekimai from "../../components/Pasiekimai";
 import Speliones from "../../components/Speliones";
 import Navigation from "../../components/Navigation";
