@@ -4,6 +4,7 @@ import Pasiekimai from "../../components/Pasiekimai";
 import Speliones from "../../components/Speliones";
 import Navigation from "../../components/Navigation";
 import classes from "./index.module.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
    const [selectedNav, setSelectedNav] = useState("nustatymai");
@@ -12,6 +13,7 @@ export default function Settings() {
       { value: "pasiekimai", label: "Pasiekimai", isActive: false },
       { value: "nustatymai", label: "Nustatymai", isActive: true },
    ]);
+   const navigate = useNavigate();
 
    const handleNavigationChange = (e) => {
       const newNavigateOptions = navigateOptions.map((element) => {
@@ -22,6 +24,29 @@ export default function Settings() {
       });
       setSelectedNav(e.target.value);
       setNavigateOptions(newNavigateOptions);
+   };
+
+   const handleLogout = async () => {
+      try {
+         const response = await fetch("http://localhost:5050/logout", {
+            method: "POST",
+            withCredentials: true,
+            credentials: "include",
+            headers: {
+               "Content-Type": "application/json",
+            },
+         });
+
+         if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+         }
+
+         navigate("/");
+      } catch (err) {
+         console.error(
+            `A problem occurred with login operation: ${err.message}`
+         );
+      }
    };
 
    return (
@@ -43,7 +68,7 @@ export default function Settings() {
                         </button>
                      ))}
                   </nav>
-                  <button>Atsijungti</button>
+                  <button onClick={handleLogout}>Atsijungti</button>
                </div>
             </div>
             <div>
