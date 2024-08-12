@@ -5,7 +5,6 @@ import { sendConfirmationEmail } from "../util/emailService.js";
 import Token from "../models/token.js";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { start } from "repl";
 
 export const register = async (req, res, next) => {
    try {
@@ -23,6 +22,7 @@ export const register = async (req, res, next) => {
       } else if (phone.length != 12) {
          return res.status(401).send("Neteisingas telefono numeris.");
       }
+
 
       const user = await User.create({ name, email, phone, password });
       const token = createSecretToken(user._id);
@@ -56,6 +56,52 @@ export const register = async (req, res, next) => {
    }
 };
 
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.userId;
+
+    const currentUser = await User.findById(userId);
+
+    if (!currentUser) {
+      return res.status(404).json( "Vartotojas nerastas" );
+    }
+
+
+    const isMatch = await bcrypt.compare(currentPassword, currentUser.password);
+    if (!isMatch) {
+      return res.status(400).json( "Slaptažodžiai nesutampa" );
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12)
+
+    await User.findByIdAndUpdate(userId, { password: hashedPassword });
+
+    return res.status(200).json( "Slaptažodis pakeistas sėkmingai" );
+  } catch (error) {
+    console.error("Error changing password:", error);
+    return res.status(500).json("Serverio klaida" );
+  }
+};
+
+export const changePhoneNumber = async (req,res) => {
+   try{
+      const userId = req.userId;
+      const {phoneNumber} = req.body;
+
+      const user = await User.findById(userId);
+      if(!user){
+         return res.status(404).json("Vartotojas nerastas")
+      }
+
+      await User.findByIdAndUpdate(userId, {phone: phoneNumber});
+      return res.status(200).json("Telefono numeris pakeistas sėkmingai");
+   }catch(error){
+      return res.status(500).json("Serverio klaida")
+
+   }
+}
+
 export const login = async (req, res, next) => {
    try {
       const { email, password } = req.body;
@@ -84,7 +130,7 @@ export const login = async (req, res, next) => {
 
       res.cookie("token", token, {
          path: "/",
-         expires: new Date(Date.now() + 1000 * 300000000),
+         expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
          httpOnly: true,
       });
       res.status(201).send("Klientas sekmingai prisijunge");
