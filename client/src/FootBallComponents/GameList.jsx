@@ -63,27 +63,29 @@ const GameList = ({ seasonId, userRole, games, setGames }) => {
                             <div className="flex items-center justify-between">
                                 {gameHasEnded ? (
                                     <div className="flex items-center">
-                                        <span className="text-gray-500 font-bold py-2">{game.homeTeam}</span>
-                                        <span className="font-bold px-2 text-red-900">vs</span>
-                                        <span className="text-gray-500 font-bold py-2">{game.awayTeam}</span>
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center">
                                         <span className="text-red-700 font-bold py-2">{game.homeTeam}</span>
                                         <span className="font-bold px-2 text-red-900">vs</span>
                                         <span className="text-green-900 font-bold py-2">{game.awayTeam}</span>
                                     </div>
+
+
+                                ) : (
+                                    <div className="flex items-center">
+                                        <span className="text-gray-500 font-bold py-2">{game.homeTeam}</span>
+                                        <span className="font-bold px-2 text-red-900">vs</span>
+                                        <span className="text-gray-500 font-bold py-2">{game.awayTeam}</span>
+                                    </div>
                                 )}
 
                                 <div className="mr-96">
-                                    {userRole === 'user' && gameHasEnded && (
+                                    {userRole === 'user' && !gameHasEnded && (
                                         <button className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 " onClick={() => handleOnWinnerClick(game._id)}>
                                             Įrašyti laimėtoją
                                         </button>
                                     )}
                                 </div>
                                 <div className="">
-                                    {userRole === 'user' && gameHasEnded && (
+                                    {userRole === 'user' && !gameHasEnded && (
                                         <button className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 " onClick={() => handleOnGuessWinnerClick(game._id)}>
                                             Spėti laimėtoja
                                         </button>

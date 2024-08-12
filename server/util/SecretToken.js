@@ -5,7 +5,7 @@ dotenv.config();
 const createSecretToken = (id) => {
    try {
       return jwt.sign({ id }, process.env.TOKEN_KEY, {
-         expiresIn: "3d", 
+         expiresIn: "1d", 
       });
    } catch (error) {
       console.error("Error generating token:", error);

@@ -4,6 +4,7 @@ import FballVotes from "../models/FootBall/footballVotes.js";
 export const addPointsForGame = async (id, winner, winnerTeamScore, loserTeamScore, seasonId, penaltiesWinner) => {
   const votesForGame = await FballVotes.find({ 'gamePredictions.gameId': id });
   if (votesForGame.length === 0) {
+    return;
   }
 
   for (const vote of votesForGame) {
@@ -25,23 +26,25 @@ export const addPointsForGame = async (id, winner, winnerTeamScore, loserTeamSco
           points += 8;
           yeallowGuess +=1;
         }
-        if (prediction.winner == winner || prediction.winnerTeamScore == winnerTeamScore && prediction.loserTeamScore == loserTeamScore) {
+        if (prediction.winner == winner && prediction.penaltiesWinner === "" || prediction.winnerTeamScore == winnerTeamScore && prediction.loserTeamScore == loserTeamScore || prediction.penaltiesWinner === penaltiesWinner) {
           points += 7;
           darkGreenGuess += 1;
         }
-        if (winnerTeamScore == loserTeamScore && prediction.penaltiesWinner == penaltiesWinner) {
+        if (winnerTeamScore === loserTeamScore && prediction.penaltiesWinner == penaltiesWinner) {
           points += 5;
           lightGreenGuess +=1;
         }
-        if (prediction.winner == winner && winnerTeamScore == prediction.winnerTeamScore && yeallowGuess === 0) {
+        if (prediction.winner == winner && winnerTeamScore == prediction.winnerTeamScore && yeallowGuess === 0 && prediction.penaltiesWinner === "") {
           points += 3;
           orangeGuess +=1;
         }
-        if (prediction.winner == winner && loserTeamScore == prediction.loserTeamScore && yeallowGuess === 0) {
+        if (prediction.winner == winner && loserTeamScore == prediction.loserTeamScore && yeallowGuess === 0 && prediction.penaltiesWinner === "") {
           points += 2;
           purpleGuess += 1;
         }
-        if (prediction.winner != winner && prediction.loserTeamScore == loserTeamScore || prediction.winner != winner && prediction.winnerTeamScore == winnerTeamScore) {
+        if (prediction.winner != winner && prediction.loserTeamScore == loserTeamScore || prediction.winner != winner && prediction.winnerTeamScore == winnerTeamScore
+           || prediction.penaltiesWinner !== penaltiesWinner && prediction.loserTeamScore == loserTeamScore
+           || prediction.penaltiesWinner !== penaltiesWinner && prediction.winnerTeamScore == winnerTeamScore) {
           points += 1;
           pinkGuess +=1;
         }
