@@ -1,129 +1,125 @@
-
 .season-selection-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  .game-details span {
-    margin-right: 10px; 
-  }
-  
-  .vs-separator {
-    margin: 0 5px; 
-  }
-  
-  .create-button,
-  .end-season-button,
-  .vote-button,
-  .record-winner-button,
-  .back-button,
-  .add-game-button,
-  .submit-button {
-    padding: 5px 10px;
-    font-size: 16px;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 5px;
-  }
-  
-  .end-season-button {
-    background-color: #dc3545;
-  }
-  
-  .end-season-button:hover {
-    background-color: #c82333;
-  }
-  
-  .games-list {
-    margin-top: 20px;
-  }
-  
-  .game-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .game-item {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f8f9fa;
-  }
-  
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: 20px;
+}
+.game-details span {
+   margin-right: 10px;
+}
 
-  .form-container {
-    margin-top: 20px;
-  }
-  
-  .form-group {
-    margin-bottom: 10px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .date-picker-wrapper {
-    position: relative;
-  }
-  
-  .select {
-    width: 100%;
-  }
-  
-  .message {
-    margin-top: 10px;
-    font-size: 14px;
-    color: green;
-    text-align: center;
-  }
-  
-  .vote-form-container,
-  .update-winner-form-container,
-  .end-season-form-container {
-    width: 100%;
-    margin-top: 10px;
-  }
-  
+.vs-separator {
+   margin: 0 5px;
+}
 
-  .mb-4 {
-    margin-bottom: 1rem;
-  }
-  
-  .flex {
-    display: flex;
-  }
-  
-  .justify-between {
-    justify-content: space-between;
-  }
-  
-  .items-center {
-    align-items: center;
-  }
-  .game-status {
-    margin-left: 10px;
-    padding: 2px 5px;
-    border-radius: 3px;
-    font-size: 12px;
-  }
-  
-  .game-status.started {
-    background-color: #28a745; 
-    color: white;
-  }
-  
-  .game-status.not-started {
-    background-color: #ffc107; 
-    color: black;
-  }
-  
+.create-button,
+.end-season-button,
+.vote-button,
+.record-winner-button,
+.back-button,
+.add-game-button,
+.submit-button {
+   padding: 5px 10px;
+   font-size: 16px;
+   color: #fff;
+   border: none;
+   border-radius: 5px;
+   cursor: pointer;
+   margin: 5px;
+}
+
+.end-season-button {
+   background-color: #dc3545;
+}
+
+.end-season-button:hover {
+   background-color: #c82333;
+}
+
+.games-list {
+   margin-top: 20px;
+}
+
+.game-list {
+   list-style: none;
+   padding: 0;
+}
+
+.game-item {
+   border: 1px solid #ddd;
+   border-radius: 5px;
+   padding: 15px;
+   margin-bottom: 10px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   background-color: #f8f9fa;
+}
+
+.form-container {
+   margin-top: 20px;
+}
+
+.form-group {
+   margin-bottom: 10px;
+}
+
+.form-group label {
+   display: block;
+   margin-bottom: 5px;
+   font-weight: bold;
+}
+
+.date-picker-wrapper {
+   position: relative;
+}
+
+.select {
+   width: 100%;
+}
+
+.message {
+   margin-top: 10px;
+   font-size: 14px;
+   color: green;
+   text-align: center;
+}
+
+.vote-form-container,
+.update-winner-form-container,
+.end-season-form-container {
+   width: 100%;
+   margin-top: 10px;
+}
+
+.mb-4 {
+   margin-bottom: 1rem;
+}
+
+.flex {
+   display: flex;
+}
+
+.justify-between {
+   justify-content: space-between;
+}
+
+.items-center {
+   align-items: center;
+}
+.game-status {
+   margin-left: 10px;
+   padding: 2px 5px;
+   border-radius: 3px;
+   font-size: 12px;
+}
+
+.game-status.started {
+   background-color: #28a745;
+   color: white;
+}
+
+.game-status.not-started {
+   background-color: #ffc107;
+   color: black;
+}
