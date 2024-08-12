@@ -1,60 +1,63 @@
 import { isBefore, parseISO, format } from "date-fns";
 import { useEffect, useState } from "react";
-import { lt } from 'date-fns/locale';
+import { lt } from "date-fns/locale";
 import UpdateWinnerForm from "./UpdateWinnerForm";
 import VoteForm from "./VoteForm";
 
 const GameList = ({ seasonId, userRole, games, setGames }) => {
-    const [showUpdateWinnerForm, setShowUpdateWinnerForm] = useState(null);
-    const [selectedGame, setSelectedGame] = useState(null);
+   const [showUpdateWinnerForm, setShowUpdateWinnerForm] = useState(null);
+   const [selectedGame, setSelectedGame] = useState(null);
 
-    useEffect(() => {
-        const fetchGames = async () => {
-            try {
-                const response = await fetch(`http://localhost:5050/footballSeason/${seasonId}/games`, {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    setGames(data.games);
-                }
-            } catch (error) {
-                console.error("Nepavyko rasti žaidimų", error);
+   useEffect(() => {
+      const fetchGames = async () => {
+         try {
+            const response = await fetch(
+               `http://localhost:5050/footballSeason/${seasonId}/games`,
+               {
+                  method: "GET",
+                  headers: {
+                     "Content-Type": "application/json",
+                  },
+                  credentials: "include",
+               }
+            );
+            const data = await response.json();
+            if (response.ok) {
+               setGames(data.games);
             }
-        };
-        fetchGames();
-    }, [seasonId, setGames]);
+         } catch (error) {
+            console.error("Nepavyko rasti žaidimų", error);
+         }
+      };
+      fetchGames();
+   }, [seasonId, setGames]);
 
-    const handleVoteSubmitted = () => { };
+   const handleVoteSubmitted = () => {};
 
-    const handleOnWinnerClick = (id) => {
-        setShowUpdateWinnerForm(id);
-        setSelectedGame(null);
-    };
+   const handleOnWinnerClick = (id) => {
+      setShowUpdateWinnerForm(id);
+      setSelectedGame(null);
+   };
 
-    const handleOnGuessWinnerClick = (id) => {
-        setShowUpdateWinnerForm(null);
-        setSelectedGame(id);
-    };
+   const handleOnGuessWinnerClick = (id) => {
+      setShowUpdateWinnerForm(null);
+      setSelectedGame(id);
+   };
 
-    const handlerWinnerUpdated = () => {
-        setShowUpdateWinnerForm(null);
-        setSelectedGame(null);
-    };
-    return (
-        <div className="space-y-9">
-            <h3 className="text-2xl font-bold mb-6">Visi šio sezono žaidimai:</h3>
-            <hr />
-            <ul>
-                {games.map(game => {
-                    const gameStartTime = parseISO(game.startTime);
-                    const gameHasStarted = isBefore(gameStartTime, new Date());
-                    const gameHasEnded = game.pointsUpdated;
-
+   const handlerWinnerUpdated = () => {
+      setShowUpdateWinnerForm(null);
+      setSelectedGame(null);
+   };
+   return (
+      <div className="space-y-9">
+         <h3 className="text-2xl font-bold mb-6">Visi šio sezono žaidimai:</h3>
+         <hr />
+         <ul>
+            {games.map((game) => {
+               const gameStartTime = parseISO(game.startTime);
+               const gameHasStarted = isBefore(gameStartTime, new Date());
+               const gameHasEnded = game.pointsUpdated;
+     
                     return (
                         <li
                             className="flex flex-col mb-1 p-2 border border-indigo-600 rounded-lg w-3/4"
