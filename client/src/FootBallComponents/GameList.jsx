@@ -49,9 +49,9 @@ const GameList = ({ seasonId, userRole, games, setGames }) => {
       setSelectedGame(null);
    };
    return (
-      <div className="space-y-9">
-         <h3 className="text-2xl font-bold mb-6">Visi šio sezono žaidimai:</h3>
-         <hr />
+      <div className="space-y-9 ">
+                 <hr />
+         <h3 className="text-2xl font-bold mb-6 text-center mt-4">Visi šio sezono žaidimai:</h3>
          <ul>
             {games.map((game) => {
                const gameStartTime = parseISO(game.startTime);
@@ -60,15 +60,17 @@ const GameList = ({ seasonId, userRole, games, setGames }) => {
      
                     return (
                         <li
-                            className="flex flex-col mb-1 p-2 border border-indigo-600 rounded-lg w-3/4"
+                            className="flex flex-col ml-44 mb-1 p-2 border border-indigo-600 rounded-lg w-3/4 "
                             key={game._id}
                         >
                             <div className="flex items-center justify-between">
                                 {gameHasEnded ? (
                                     <div className="flex items-center">
-                                        <span className="text-red-700 font-bold py-2">{game.homeTeam}</span>
+                                        <span className="text-green-900 font-bold py-2">{game.winner}</span>
+                                        <span>({game.winnerTeamScore})</span>
                                         <span className="font-bold px-2 text-red-900">vs</span>
-                                        <span className="text-green-900 font-bold py-2">{game.awayTeam}</span>
+                                        <span className="text-red-700 font-bold py-2">{game.awayTeam === game.winner ? game.homeTeam : game.awayTeam}</span>
+                                        <span>({game.loserTeamScore})</span>
                                     </div>
 
 
@@ -80,14 +82,14 @@ const GameList = ({ seasonId, userRole, games, setGames }) => {
                                     </div>
                                 )}
 
-                                <div className="mr-96">
+                                <div className="absolute ml-96">
                                     {userRole === 'user' && !gameHasEnded && (
                                         <button className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 " onClick={() => handleOnWinnerClick(game._id)}>
                                             Įrašyti laimėtoją
                                         </button>
                                     )}
                                 </div>
-                                <div className="">
+                                <div className="absolute ml-64">
                                     {userRole === 'user' && !gameHasEnded && (
                                         <button className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 " onClick={() => handleOnGuessWinnerClick(game._id)}>
                                             Spėti laimėtoja
@@ -98,9 +100,9 @@ const GameList = ({ seasonId, userRole, games, setGames }) => {
                                     <span className="font-medium pr-1 ">{format(gameStartTime, 'yyyy-MM-dd HH:mm', { locale: lt })}</span>
                                     <svg className="h-5 w-5 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">  <circle cx="12" cy="12" r="10" />  <polyline points="12 6 12 12 16 14" /></svg>
                                     <span
-                                        className={`ml-2 py-1 rounded text-xs font-bold ${gameHasStarted ? 'bg-red-700 text-black px-6' : 'bg-yellow-400 text-black px-4'}`}
+                                        className={`ml-2 py-1 rounded text-xs font-bold ${gameHasEnded ? 'bg-red-700 text-black px-6' : gameHasStarted ? 'bg-yellow-400 text-black px-10' : 'bg-green-500 text-black px-8'}`}
                                     >
-                                        {gameHasStarted ? 'Jau prasidėjo' : 'Dar neprasidėjo'}
+                                       {gameHasEnded ? 'Žaidimas pasibaige' : gameHasStarted ? 'Jau prasidėjo' : 'Dar neprasidėjo'}
                                     </span>
                                 </div>
                             </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import Select from "react-select";
 
 const SeasonsDropdown = ({ onSelect, seasons, setSeasons }) => {
@@ -17,27 +17,51 @@ const SeasonsDropdown = ({ onSelect, seasons, setSeasons }) => {
                 const data = await response.json();
                 if (response.ok) {
                     const sortedList = data.seasons.sort((a, b) => b.year - a.year);
-                    setSeasons(sortedList.map(season => ({ value: season._id, label: `${season.name} - ${season.year}` })));
+                    setSeasons(sortedList);
                 }
             } catch (error) {
                 console.log("sezonai nerasti", error);
             }
         }
         fetchSeasons();
-    }, [setSeasons])
+    }, [setSeasons]);
+
     const handleChange = (selectedOption) => {
         setSelectedSeason(selectedOption);
-        onSelect(selectedOption.value);
+        const selectedSeasonData = seasons.find(season => season._id === selectedOption.value);
+        onSelect(selectedSeasonData);
+    };
+
+    const customStyles = {
+        option: (provided, { data }) => ({
+            ...provided,
+            color: data.hasEnded ? 'red' : 'green',
+        }),
+        placeholder: (provided) => ({
+            ...provided,
+            color: 'black',
+            fontWeight: 'bold',
+        }),
+        singleValue: (provided, { data }) => ({
+            ...provided,
+            color: data.hasEnded ? 'red' : 'green',
+        }),
     };
 
     return (
         <Select
-            options={seasons}
+            options={seasons.map(season => ({
+                value: season._id,
+                label: `${season.name} - ${season.year}`,
+                hasEnded: season.Top4Updated,
+            }))}
             value={selectedSeason}
             onChange={handleChange}
             className="w-3/4 text-center"
             placeholder="Pasirinkite sezona"
+            styles={customStyles} 
         />
     );
 };
-export default SeasonsDropdown;  
+
+export default SeasonsDropdown;
