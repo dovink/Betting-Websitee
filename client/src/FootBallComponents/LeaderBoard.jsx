@@ -18,6 +18,7 @@ const TopScoreBoard = ({ seasonId }) => {
                 if (response.ok) {
                     setTopUsers(data.topUsers);
                 } else {
+                    setTopUsers([]);
                     console.error('Failed to fetch top users');
                 }
             } catch (error) {

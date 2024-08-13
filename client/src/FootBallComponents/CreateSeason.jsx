@@ -19,9 +19,9 @@ const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
       return
     }
 
-    if(participatingTeams.length === 0)
+    if(participatingTeams.length < 4)
     {
-      setMessage("Pasirinkite dalyvaujančias šalis")
+      setMessage("Pasirinkite bent 4 dalyvaujančias šalis")
       return;
     }
 

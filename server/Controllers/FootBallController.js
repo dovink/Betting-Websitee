@@ -22,17 +22,6 @@ export const getAllSeasons = async (req, res) => {
         res.status(500).send({ message: error.message });
     }
 };
-export const getCurrentSeason = async (req, res) => {
-    try {
-        const currentSeason = await footballSeason.findOne({ current: true });
-        if (!currentSeason) {
-            return res.status(404).send({ message: 'Sezonas nerastas' });
-        }
-        res.status(200).send({ season: currentSeason });
-    } catch (error) {
-        res.status(500).send({ message: error.message });
-    }
-};
 export const getSeasonTeams = async (req, res) => {
     try {
         const { seasonId } = req.params;
@@ -197,13 +186,27 @@ export const makeTop4Guess = async (req, res) => {
     }
   };
 
-  export const LeaderBoard = async (req,res) => {
-    const {seasonId} = req.params;
-    try{
-      const topUsers = await FballVotes.find({ seasonId })
-      .sort({ points: -1 })
-      .limit(5);
-
+  export const LeaderBoard = async (req, res) => {
+    const { seasonId } = req.params;
+    
+    try {
+      let topUsers = await FballVotes.find({ seasonId });
+  
+      topUsers.sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        if (b.yellowGuess !== a.yellowGuess) return b.yellowGuess - a.yellowGuess;
+        if (b.darkGreenGuess !== a.darkGreenGuess) return b.darkGreenGuess - a.darkGreenGuess;
+        if (b.greyGuess !== a.greyGuess) return b.greyGuess - a.greyGuess;
+        if (b.lightGreenGuess !== a.lightGreenGuess) return b.lightGreenGuess - a.lightGreenGuess;
+        if (b.cyanGuess !== a.cyanGuess) return b.cyanGuess - a.cyanGuess;
+        if (b.orangeGuess !== a.orangeGuess) return b.orangeGuess - a.orangeGuess;
+        if (b.purpleGuess !== a.purpleGuess) return b.purpleGuess - a.purpleGuess;
+        if (b.pinkGuess !== a.pinkGuess) return b.pinkGuess - a.pinkGuess;
+        return 0;
+      });
+  
+      topUsers = topUsers.slice(0, 5);
+  
       const populatedTopUsers = await Promise.all(topUsers.map(async (vote) => {
         const user = await User.findById(vote.userId).select('name');
         return {
@@ -212,12 +215,68 @@ export const makeTop4Guess = async (req, res) => {
         };
       }));
   
-      if (!topUsers) {
+      if (!topUsers || topUsers.length === 0) {
         return res.status(404).json({ message: "Nera priskirtu tasku uz si sezona" });
       }
+  
       res.status(200).json({ topUsers: populatedTopUsers });
-
-    }catch(error){
-      return res.status(500).json({message: "Nepavyko gauti rezultatu"})
+    } catch (error) {
+      return res.status(500).json({ message: "Nepavyko gauti rezultatu" });
     }
-  }
+  };
+  export const GetUserRank = async (req, res) => {
+    const { seasonId } = req.params;
+    const userId = req.userId;
+
+  
+    try {
+      let allUsers = await FballVotes.find({ seasonId });
+
+      allUsers.sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points;
+        if (b.yellowGuess !== a.yellowGuess) return b.yellowGuess - a.yellowGuess;
+        if (b.darkGreenGuess !== a.darkGreenGuess) return b.darkGreenGuess - a.darkGreenGuess;
+        if (b.greyGuess !== a.greyGuess) return b.greyGuess - a.greyGuess;
+        if (b.lightGreenGuess !== a.lightGreenGuess) return b.lightGreenGuess - a.lightGreenGuess;
+        if (b.cyanGuess !== a.cyanGuess) return b.cyanGuess - a.cyanGuess;
+        if (b.orangeGuess !== a.orangeGuess) return b.orangeGuess - a.orangeGuess;
+        if (b.purpleGuess !== a.purpleGuess) return b.purpleGuess - a.purpleGuess;
+        if (b.pinkGuess !== a.pinkGuess) return b.pinkGuess - a.pinkGuess;
+        return 0;
+      });
+  
+      const userIndex = allUsers.findIndex(vote => vote.userId.toString() === userId.toString());
+      if (userIndex === -1) {
+        return res.status(404).json({ message: "Vartotojas nerastas" });
+      }
+  
+      const userRank = userIndex + 1;
+      const userVote = allUsers[userIndex];
+  
+      const user = await User.findById(userId).select('name');
+  
+      const userInfo = {
+        userId: userVote.userId,
+        userName: user ? user.name : 'Nežinomas',
+        seasonId: userVote.seasonId,
+        top4Teams: userVote.top4Teams,
+        hasGuessedTop4: userVote.hasGuessedTop4,
+        gamePredictions: userVote.gamePredictions,
+        points: userVote.points,
+        yellowGuess: userVote.yellowGuess,
+        darkGreenGuess: userVote.darkGreenGuess,
+        greyGuess: userVote.greyGuess,
+        lightGreenGuess: userVote.lightGreenGuess,
+        cyanGuess: userVote.cyanGuess,
+        orangeGuess: userVote.orangeGuess,
+        purpleGuess: userVote.purpleGuess,
+        pinkGuess: userVote.pinkGuess,
+        rank: userRank
+      };
+  
+      res.status(200).json({ userInfo });
+  
+    } catch (error) {
+      return res.status(500).json({ message: "Nepavyko gauti vartotojo reitingo" });
+    }
+  };
