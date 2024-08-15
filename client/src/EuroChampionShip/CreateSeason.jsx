@@ -1,46 +1,58 @@
-import React, { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import Select from 'react-select';
-import 'react-datepicker/dist/react-datepicker.css';
-import './../assets/CreateSeason.css'; 
-import countriesLT from '../assets/countriesLT';
+import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import Select from "react-select";
+import "react-datepicker/dist/react-datepicker.css";
+import "./../assets/CreateSeason.css";
+import countriesLT from "../assets/countriesLT";
 
 const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [year, setYear] = useState(null);
   const [participatingTeams, setParticipatingTeams] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (year === null) {
+      setMessage("Pasirinkite sezono metus");
+      return;
+    }
+
+    if (participatingTeams.length < 4) {
+      setMessage("Pasirinkite bent 4 dalyvaujančias šalis");
+      return;
+    }
+
     try {
-      const response = await fetch('http://localhost:5050/season', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5050/season", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name,
           year: year ? year.getFullYear() : null,
-          participatingTeams: participatingTeams.map(team => team.label),
+          participatingTeams: participatingTeams.map((team) => team.label),
         }),
-        credentials: 'include',
+        credentials: "include",
       });
 
       const data = await response.json();
       if (response.ok) {
-        setMessage(data.message);
-        setName('');
+        setMessage("Sezonas sukurtas sekmingai");
+        setName("");
         setYear(null);
         setParticipatingTeams([]);
-        setFormVisible(false);
-        onSeasonCreated();
+        onSeasonCreated(data.newSeason);
+        setFormVisible(true);
       } else {
-        setMessage(data.message || 'Nepavyko sukurti sezono');
+        setMessage(
+          "Nepavyko sukurti sezono(patikrinkite ar sezono vardas yra unikalus"
+        );
       }
     } catch (error) {
-      setMessage(error.message || 'Nepavyko sukurti sezono');
+      setMessage("Nepavyko sukurti sezono");
     }
   };
 
@@ -48,7 +60,7 @@ const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
     <div className="form-container">
       {formVisible && (
         <>
-          <h2 className='text-lg text-pretty'>Naujas sezonas</h2>
+          <h2 className="font-bold">Naujas sezonas</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Pavadinimas:</label>
@@ -75,16 +87,19 @@ const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
                 isMulti
                 options={countriesLT}
                 value={participatingTeams}
-                onChange={(selectedOptions) => setParticipatingTeams(selectedOptions)}
+                onChange={(selectedOptions) =>
+                  setParticipatingTeams(selectedOptions)
+                }
                 className="basic-multi-select"
                 classNamePrefix="select"
+                placeholder="Pasirinkite..."
               />
             </div>
             <div className="form-group">
               <button type="submit">Sukurti sezona</button>
             </div>
           </form>
-          {message && <p className="message">{message}</p>}
+          {message && <p className="text-red-700 text-center font-medium">{message}</p>}
         </>
       )}
     </div>

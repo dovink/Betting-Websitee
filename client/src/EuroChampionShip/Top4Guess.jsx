@@ -2,35 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import './../assets/CreateSeason.css';
 
-const Top4Guess = ({ seasonId }) => {
-  const [participatingTeams, setParticipatingTeams] = useState([]);
+const Top4Guess = ({ seasonId, participatingTeams }) => {
   const [selectedTeams, setSelectedTeams] = useState([]);
   const [rankedTeams, setRankedTeams] = useState([]);
   const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        const response = await fetch(`http://localhost:5050/season/${seasonId}/teams`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        });
-        const data = await response.json();
-        if (response.ok) {
-          setParticipatingTeams(data.teams.map(team => ({ value: team, label: team })));
-        } else {
-          setMessage(data.message || 'Napvyko rasti komandų');
-        }
-      } catch (error) {
-        setMessage(error.message || 'Nepavyko rasti komandų');
-      }
-    };
-
-    fetchTeams();
-  }, [seasonId]);
 
   const handleChange = (selectedOptions) => {
     if (selectedOptions.length <= 4) {
@@ -97,9 +72,9 @@ const Top4Guess = ({ seasonId }) => {
             options={participatingTeams}
             value={selectedTeams}
             onChange={handleChange}
-            className="basic-multi-select"
+            className="mb-4 mt-2"
             classNamePrefix="select"
-            placeholder="Select top 4 teams"
+            placeholder="Pasirinkite top 4 komandas"
           />
         </div>
         {selectedTeams.length === 4 && (
@@ -125,7 +100,7 @@ const Top4Guess = ({ seasonId }) => {
           <button type="submit">Pateikti savo spėjima</button>
         </div>
       </form>
-      {message && <p className="message">{message}</p>}
+      {message && <p className="font-bold text-red-700 text-center">{message}</p>}
     </div>
   );
 };

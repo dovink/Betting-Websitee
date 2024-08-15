@@ -16,7 +16,7 @@ const UserRank = ({season}) => {
     useEffect(() => {
         const fetchUserRank = async () => {
             try {
-                const response = await fetch(`http://localhost:5050/footballSeason/${season._id}/userRank`, {
+                const response = await fetch(`http://localhost:5050/season/${season._id}/userRank`, {
                     method: "GET",
                     credentials: "include",
                     headers: {
@@ -59,11 +59,11 @@ const UserRank = ({season}) => {
             <div className="flex justify-between w-full mb-4">
                 <div className="text-center border-2 border-black rounded-lg p-2 bg-white w-1/2 mr-2 block">
                 <span className='font-bold'>{season.year}</span><br></br>
-                <span className='block break-words text-center font-medium'>{season.name}</span>
+                <span className='block text-center break-words font-medium'>{season.name}</span>
                 </div>
                 <div className="text-center border-2 border-black bg-yellow-500 rounded-lg p-2 w-1/2 mr-2">
-                    <span className="text-xl text-center">Vieta:</span> <br></br>
-                    <span className="font-bold text-3xl ml-2 text-center">{UserInfo.rank}</span>
+                    <span className="text-xl">Vieta:</span> <br></br>
+                    <span className="font-bold text-3xl ml-2">{UserInfo.rank}</span>
                 </div>
             </div>
 

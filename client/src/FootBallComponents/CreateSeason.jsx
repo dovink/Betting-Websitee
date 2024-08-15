@@ -39,7 +39,6 @@ const CreateSeason = ({ onSeasonCreated, formVisible, setFormVisible }) => {
         credentials: 'include',
       });
       const data = await response.json()
-      console.log(data.newSeason)
       if (response.ok) {
         setMessage("Sezonas sukurtas sekmingai");
         setName('');

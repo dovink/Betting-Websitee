@@ -31,6 +31,12 @@ const TopScoreBoard = ({ seasonId }) => {
         }
     }, [seasonId]);
 
+    if(topUsers.length === 0){
+        return(
+            <div className='text-center mt-4 font-medium text-red-500'>Nėra duomenų apie žaidėjų dalyvavimą</div>
+        )
+    }
+
 
     return (
         <div className="w-3/12 mx-auto mt-10">

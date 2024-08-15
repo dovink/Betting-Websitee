@@ -4,7 +4,7 @@ import { lt } from "date-fns/locale";
 import UpdateWinnerForm from "./UpdateWinnerForm";
 import VoteForm from "./VoteForm";
 
-const GameList = ({ seasonId, userRole, games, setGames }) => {
+const GameList = ({ season, userRole, games, setGames }) => {
    const [showUpdateWinnerForm, setShowUpdateWinnerForm] = useState(null);
    const [selectedGame, setSelectedGame] = useState(null);
 
@@ -12,7 +12,7 @@ const GameList = ({ seasonId, userRole, games, setGames }) => {
       const fetchGames = async () => {
          try {
             const response = await fetch(
-               `http://localhost:5050/footballSeason/${seasonId}/games`,
+               `http://localhost:5050/footballSeason/${season._id}/games`,
                {
                   method: "GET",
                   headers: {
@@ -30,7 +30,7 @@ const GameList = ({ seasonId, userRole, games, setGames }) => {
          }
       };
       fetchGames();
-   }, [seasonId, setGames]);
+   }, [season._id, setGames]);
 
    const handleVoteSubmitted = () => {};
 
@@ -83,14 +83,14 @@ const GameList = ({ seasonId, userRole, games, setGames }) => {
                                 )}
 
                                 <div className="absolute ml-96">
-                                    {userRole === 'user' && !gameHasEnded && (
+                                    {userRole === 'user' && !gameHasEnded && !season.Top4Updated && (
                                         <button className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 " onClick={() => handleOnWinnerClick(game._id)}>
                                             Įrašyti laimėtoją
                                         </button>
                                     )}
                                 </div>
                                 <div className="absolute ml-64">
-                                    {userRole === 'user' && !gameHasEnded && (
+                                    {userRole === 'user' && !gameHasEnded && !season.Top4Updated && (
                                         <button className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 " onClick={() => handleOnGuessWinnerClick(game._id)}>
                                             Spėti laimėtoja
                                         </button>

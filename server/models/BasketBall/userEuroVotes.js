@@ -11,6 +11,14 @@ const EuroVotesScehma = new mongoose.Schema({
         margin: { type: Number },
       }],
       points: { type: Number, default: 0 },
+      yellowGuess: { type: Number, default: 0 },
+      darkGreenGuess: { type: Number, default: 0 },
+      greyGuess: { type: Number, default: 0 },
+      lightGreenGuess: { type: Number, default: 0 },
+      cyanGuess: { type: Number, default: 0 },
+      orangeGuess: { type: Number, default: 0 },
+      purpleGuess: { type: Number, default: 0 },
+      pinkGuess: { type: Number, default: 0 },
 });
 
 const EuroVotes = mongoose.model("EuroVotes", EuroVotesScehma);
