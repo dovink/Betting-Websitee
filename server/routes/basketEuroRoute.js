@@ -1,5 +1,5 @@
 import {verifyToken} from "../Controllers/AuthController.js";
-import {createSeason, makeTop4Guess, AddEuroGame, updateWinner, putEuroVote, updateTop4Winners, getSeasonTeams, getCurrentSeason, getSeasons, getGamesForSeason, LeaderBoard } from "../Controllers/EuroChampionShip.js";
+import {createSeason, makeTop4Guess, AddEuroGame, updateWinner, putEuroVote, updateTop4Winners, getSeasonTeams, getCurrentSeason, getSeasons, getGamesForSeason, LeaderBoard, GetUserRank } from "../Controllers/EuroChampionShip.js";
 import express, { Router } from "express";
 
 const euroRouter = express.Router();
@@ -18,5 +18,6 @@ euroRouter.get('/season/current',verifyToken, getCurrentSeason);
 euroRouter.get('/seasons', verifyToken, getSeasons);
 euroRouter.get('/season/:seasonId/games', verifyToken, getGamesForSeason);
 euroRouter.get('/top-users/:seasonId', verifyToken ,LeaderBoard);
+euroRouter.get('/season/:seasonId/userRank', verifyToken, GetUserRank);
 
 export default euroRouter;

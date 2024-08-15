@@ -1,9 +1,7 @@
 import {useState, useEffect} from "react";
-import { useNavigate } from "react-router-dom";
 
 const getTeams = () => {
     const [participatingTeams, setParticipatingTeams] = useState([]);
-    const navigate = useNavigate();
 
     const fetchTeams = async(seasonId) => {
         try{
@@ -16,9 +14,9 @@ const getTeams = () => {
                 });
                 const data = await response.json();
                 if(response.ok){
-                    setParticipatingTeams(data.teams.map(team=>({value: team, label: team})))
+                    setParticipatingTeams(data.teams.map(team => ({value:team, label:team})))
                 }else{
-                    console.error('failed to fetch teams')
+                    console.error("Nepavyko rasti komandu")
                 }
         }catch(error){
             console.error("Error fetching teams", error);

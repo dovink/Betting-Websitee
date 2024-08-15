@@ -144,7 +144,7 @@ const footBallSection = ({ user }) => {
                         </div>
                     )}
 
-                    <GameList seasonId={selectedSeason._id} userRole={user.role} games={games} setGames={setGames} />
+                    <GameList season={selectedSeason} userRole={user.role} games={games} setGames={setGames} />
                 </>
             )}
         </>

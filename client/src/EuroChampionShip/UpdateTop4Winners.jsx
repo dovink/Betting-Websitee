@@ -63,7 +63,7 @@ const UpdateTop4Winners = ({ seasonId, teams }) => {
 
   return (
     <div className="form-container">
-      <h2>Irašykite TOP4 komandas ir pabaikite sezoną</h2>
+      <h2 className='font-bold'>Irašykite TOP4 komandas ir pabaikite sezoną</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>TOP 4 komandos:</label>
@@ -72,7 +72,7 @@ const UpdateTop4Winners = ({ seasonId, teams }) => {
             options={teams}
             value={top4Teams}
             onChange={handleChange}
-            className="basic-multi-select"
+            className="mt-2 mb-4"
             classNamePrefix="select"
             placeholder="Pasirinkite 4 komandas"
           />
